@@ -12,11 +12,18 @@
 #define SETTINGS_FILE "settings.ini"
 #define SEPERATOR_INDEX '='
 
+#define INFLUXDB_HOST "influx-playground.sendlab.nl"
+#define INFLUXDB_ORG "Sendlab"
+#define INFLUXDB_PORT 443
+#define INFLUXDB_BUCKET "STU-TI-Biobased-2024"
+#define INFLUXDB_TOKEN "UCTCPxVZVeYbQJMcuNcuXW9tf-KhKn90zrQNBN-tddnLjnKrBrsYKkt-scqPx5N2nwvcghdpYchs638xOviHTA=="
+
 char wifiSSID[30];
 char wifiPassword[30];
 char sensorType[30];
 
 WiFiSSLClient wifi;
+HttpClient client = HttpClient(wifi, INFLUXDB_HOST, INFLUXDB_PORT);
 
 SGP30VOC sgp30(0x58);
 bool sgp30connected = true;
@@ -48,6 +55,16 @@ void setup()
     }
 
     connectToWifi();
+
+    InfluxDB influxDB = InfluxDB(INFLUXDB_HOST, INFLUXDB_ORG, INFLUXDB_BUCKET, INFLUXDB_TOKEN);
+
+    Point point = Point().measurement("co2_sensor")
+        .addTag("room", "badkamer_guus")
+        .addTag("sensor_id", "00-00-00-00-00-03")
+        .addTag("unit", "ppm")
+        .addField("co2", 2.0);
+
+    influxDB.writePoint(point, client);
      
     if (sgp30connected)
     {

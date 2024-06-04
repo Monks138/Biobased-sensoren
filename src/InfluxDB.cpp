@@ -19,18 +19,31 @@ InfluxDB::~InfluxDB() {
 void InfluxDB::writePoint(Point point, HttpClient& client) {
     arduino::String data = point.toLineProtocol();
 
-    Serial.println("Writing...");
+    float temperature = 24.5;
+    float humidity = 60.2;
 
-    arduino::String url = arduino::String("/api/v2/write?org=") + this->influxdb_org + "&bucket=" + this->influxdb_bucket + "&precision=s";
+    String exampleData = "environment,device=arduino_nano temperature=" + String(temperature) + ",humidity=" + String(humidity);
+    Serial.print("Expected data like: ");
+    Serial.println(exampleData);
+
+
+    String url = "/write?db=" + String(this->influxdb_bucket);
+
     client.beginRequest();
     client.post(url);
-    client.sendHeader("Authorization", String("Token ") + this->influxdb_token);
+    client.sendHeader("Authorization", String("Token ") + String(this->influxdb_token));
     client.sendHeader("Content-Type", "application/x-www-form-urlencoded");
     client.sendHeader("Content-Length", data.length());
     client.beginBody();
     client.print(data);
     client.endRequest();
 
-    Serial.println(client.responseStatusCode());
+    int statusCode = client.responseStatusCode();
+    String response = client.responseBody();
+
+    Serial.print("Status code: ");
+    Serial.println(statusCode);
+    Serial.print("Response: ");
+    Serial.println(response);
 }
 

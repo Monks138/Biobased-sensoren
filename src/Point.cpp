@@ -38,5 +38,8 @@ Point& Point::measurement(const char* measurement) {
 }
 
 String Point::toLineProtocol() {
-    return measurement_ + "," + tags_ + " " + fields_;
+    arduino::String data = arduino::String(measurement_) + "," + arduino::String(tags_) + " " + arduino::String(fields_);
+    Serial.print("Data to be send: ");
+    Serial.println(data);
+    return data;
 }
