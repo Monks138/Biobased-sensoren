@@ -1,12 +1,18 @@
 #include <Arduino.h>
 #include "SGP30VOC.h"
 #include "SCD30CO2.h"
+#include "SettingsInitializer.h"
 
 SGP30VOC sgp30(0x58);
 bool sgp30connected = true;
 
 SCD30CO2 scd30sensor(0x61);
 bool scd30connected = true;
+
+#define CONFIG_FILE "settings.ini"
+#define CONFIG_VALUES_COUNT 3
+String CONFIG_VALUES[] = {"WIFI-SSID", "WIFI-PASSWORD", "SENSOR-TYPE"};
+SettingsInitializer settingsInitializer(CONFIG_VALUES,CONFIG_VALUES_COUNT, CONFIG_FILE);
 
 void setup()
 {
@@ -22,6 +28,16 @@ void setup()
         scd30sensor.begin();
     }
     Serial.println(sgp30.measure());
+
+    if (settingsInitializer.begin()) {
+        Serial.println("Config loaded successfully");
+        for (int i = 0; i < 2; i++) {
+            Serial.print(CONFIG_VALUES[i] + ": ");
+            Serial.println(settingsInitializer.getValue(CONFIG_VALUES[i]));
+        }
+    } else {
+        Serial.println("Failed to load config");
+    }
 }
 
 void loop()
