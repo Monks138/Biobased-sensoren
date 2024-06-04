@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+<<<<<<< Updated upstream
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="PlatformIOSettings">
     <option name="linkedExternalProjectsSettings">
@@ -14,4 +15,9 @@
     </option>
   </component>
   <component name="PlatformIOWorkspace" PROJECT_DIR="$PROJECT_DIR$" />
+=======
+  <component name="PlatformIOWorkspace">
+    <contentRoot DIR="$PROJECT_DIR$" />
+  </component>
+>>>>>>> Stashed changes
 </project>
