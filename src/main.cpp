@@ -18,6 +18,16 @@ void setup()
 {
     Serial.begin(115200);
     Serial.println("Hello world!");
+
+    if (settingsInitializer.begin()) {
+        Serial.println("Settings loaded successfully:");
+        for (int i = 0; i < 2; i++) {
+            Serial.print(CONFIG_VALUES[i] + ": ");
+            Serial.println(settingsInitializer.getValue(CONFIG_VALUES[i]));
+        }
+    } else {
+        Serial.println("Failed to load settings");
+    }
      
     if (sgp30connected)
     {
@@ -28,16 +38,6 @@ void setup()
         scd30sensor.begin();
     }
     Serial.println(sgp30.measure());
-
-    if (settingsInitializer.begin()) {
-        Serial.println("Config loaded successfully");
-        for (int i = 0; i < 2; i++) {
-            Serial.print(CONFIG_VALUES[i] + ": ");
-            Serial.println(settingsInitializer.getValue(CONFIG_VALUES[i]));
-        }
-    } else {
-        Serial.println("Failed to load config");
-    }
 }
 
 void loop()

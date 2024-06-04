@@ -16,7 +16,7 @@ private:
     int parameterCount;
     String configFilePath;
 
-    String readValueFromConfig(String key);
+    void readValues();
 
 public:
     SettingsInitializer(String keys[],int keyCount, String filePath);

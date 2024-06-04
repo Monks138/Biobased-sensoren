@@ -31,29 +31,31 @@ bool SettingsInitializer::begin() {
         Serial.println("Failed to open config file!");
         return false;
     }
-    for (int i = 0; i < parameterCount; i++) {
-        parameters[i].value = readValueFromConfig(parameters[i].key);
-    }
+    readValues();
     configFile.close();
     return true;
 }
 
-String SettingsInitializer::readValueFromConfig(String key) {
+void SettingsInitializer::readValues() {
     File configFile = SD.open(configFilePath.c_str());
     configFile.seek(0);
     while (configFile.available()) {
         String line = configFile.readStringUntil('\n');
         line.trim();
-        if (line.startsWith(key)) {
-            int separatorIndex = line.indexOf('=');
-            if (separatorIndex != -1) {
-                String value = line.substring(separatorIndex + 1);
-                value.trim();
-                return value;
+        int separatorIndex = line.indexOf('=');
+        if (separatorIndex != -1) {
+            String key = line.substring(0, separatorIndex);
+            String value = line.substring(separatorIndex + 1);
+            value.trim();
+            key.trim();
+            for (int i = 0; i < parameterCount; i++) {
+                if(key == parameters[i].key) {
+                    parameters[i].value = value;
+                    break;
+                }
             }
         }
     }
-    return String("");
 }
 
 String SettingsInitializer::getValue(String key) {
