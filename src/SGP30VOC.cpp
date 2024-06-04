@@ -7,7 +7,7 @@ void SGP30VOC::begin() {
     Wire.begin();
     if (!sgp.begin()) {
         Serial.println("SGP30 sensor not found :(");
-        while (1);
+        return;
     }
     Serial.println("SGP30 sensor found :)");
 
@@ -19,8 +19,7 @@ void SGP30VOC::begin() {
 
 float SGP30VOC::measure() {
     if (!sgp.IAQmeasure()) {
-        Serial.println("Measurement failed");
-        return NAN;
+        return -1.0;
     }
     return sgp.TVOC + offset;
 }

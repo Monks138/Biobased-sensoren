@@ -20,15 +20,11 @@ void SCD30CO2::begin()
 
 float SCD30CO2::measure()
 {
-    if (scd30sensor.isAvailable())
-    {
-        float result[3];
-        scd30sensor.getCarbonDioxideConcentration(result);
-        return result[0];
-    }
-    else
+    if (!scd30sensor.isAvailable())
     {
         return -1.0;
     }
-
+    float result[3];
+    scd30sensor.getCarbonDioxideConcentration(result);
+    return result[0] + offset;
 }

@@ -26,14 +26,17 @@ void setup()
 
 void loop()
 {
+    Serial.println("Looping...");
     if (sgp30connected)
     {
+        Serial.print("sgp: ");
         Serial.println(sgp30.measure());
     }
     if (scd30connected)
     {
+        Serial.print("scd: ");
         Serial.println(scd30sensor.measure());
     }
 
-    delay(1000);
+    delay(2000);
 }
