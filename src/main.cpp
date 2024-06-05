@@ -9,10 +9,7 @@
 #include <ArduinoHttpClient.h>
 #include "InfluxDB.h"
 
-#define PIN_SPI_CS 4
 #define PIN_CD 7
-#define SETTINGS_FILE "settings.ini"
-#define SEPERATOR_INDEX '='
 
 #define INFLUXDB_HOST "influx-playground.sendlab.nl"
 #define INFLUXDB_ORG "Sendlab"
@@ -21,7 +18,7 @@
 #define INFLUXDB_TOKEN "UCTCPxVZVeYbQJMcuNcuXW9tf-KhKn90zrQNBN-tddnLjnKrBrsYKkt-scqPx5N2nwvcghdpYchs638xOviHTA=="
 
 #define CONFIG_FILE "settings.ini"
-#define CONFIG_VALUES_COUNT 3
+#define CONFIG_VALUES_COUNT 5
 
 WiFiSSLClient wifi;
 HttpClient client = HttpClient(wifi, INFLUXDB_HOST, INFLUXDB_PORT);
@@ -30,7 +27,7 @@ InfluxDB *influxDB;
 // sensors
 Sensor *sensor;
 
-String CONFIG_VALUES[] = {"WIFI-SSID", "WIFI-PASSWORD", "SENSOR-TYPE", "ROOM"};
+String CONFIG_VALUES[] = {"WIFI-SSID", "WIFI-PASSWORD", "SENSOR-TYPE", "ROOM", "UPDATE-TIME"};
 SettingsInitializer settingsInitializer(CONFIG_VALUES,CONFIG_VALUES_COUNT, CONFIG_FILE);
 
 void connectToWifi();
@@ -47,7 +44,7 @@ void setup()
 
     if (settingsInitializer.begin()) {
         Serial.println("Settings loaded successfully:");
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < CONFIG_VALUES_COUNT; i++) {
             Serial.print(CONFIG_VALUES[i] + ": ");
             Serial.println(settingsInitializer.getValue(CONFIG_VALUES[i]));
         }
@@ -82,7 +79,7 @@ void loop()
     Serial.println("measured data, going to make point");
 
     Point point = Point().measurement("co2_sensor")
-        .addTag("room", "badkamer_guus")
+        .addTag("room", settingsInitializer.getValue("ROOM"))
         .addTag("sensor_id", getMACAddressString().c_str())
         .addTag("unit", "ppm")
         .addField("co2", measurement);
@@ -90,6 +87,9 @@ void loop()
 
     influxDB->writePoint(point, client);
     Serial.println("Data sent to InfluxDB!");
+
+    String updateTime = settingsInitializer.getValue("UPDATE-TIME");
+    int updateTimeInMilli = updateTime.toInt();
     delay(1000);
 }
 
