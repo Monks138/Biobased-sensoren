@@ -2,6 +2,7 @@
 
 #include "SGP30VOC.h"
 #include "SCD30CO2.h"
+#include "HDC1080.h"
 #include "SettingsInitializer.h"
 #include <SD.h>
 #include <WiFiNINA.h>
@@ -27,18 +28,13 @@ WiFiSSLClient wifi;
 HttpClient client = HttpClient(wifi, INFLUXDB_HOST, INFLUXDB_PORT);
 
 SGP30VOC sgp30(0x58);
-bool sgp30connected = true;
+bool sgp30connected = false;
 
 SCD30CO2 scd30sensor(0x61);
-bool scd30connected = true;
+bool scd30connected = false;
 
-#define CONFIG_FILE "settings.ini"
-#define CONFIG_VALUES_COUNT 3
-String CONFIG_VALUES[] = {"WIFI-SSID", "WIFI-PASSWORD", "SENSOR-TYPE"};
-SettingsInitializer settingsInitializer(CONFIG_VALUES,CONFIG_VALUES_COUNT, CONFIG_FILE);
-
-void loadFromSdCard();
-void connectToWifi();
+HDC1080 hdc(0x00);
+bool hdc1080connected = true;
 
 void setup()
 {
@@ -91,7 +87,10 @@ void setup()
     {
         scd30sensor.begin();
     }
-    Serial.println(sgp30.measure());
+    if (hdc1080connected)
+    {
+        hdc.begin();
+    }
 }
 
 void loop()
@@ -106,6 +105,14 @@ void loop()
     {
         Serial.print("scd: ");
         Serial.println(scd30sensor.measure());
+    }
+    if (hdc1080connected)
+    {
+        Serial.print("Temp: ");
+        Serial.println(hdc.measure());
+        Serial.print("Hum: ");
+        Serial.print(hdc.humidity());
+        Serial.println(" %");
     }
 
     delay(2000);
