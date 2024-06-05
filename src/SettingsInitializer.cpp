@@ -22,17 +22,26 @@ SettingsInitializer::~SettingsInitializer() {
 }
 
 bool SettingsInitializer::begin() {
-    if (!SD.begin(SD_CS_PIN)) {
+    bool sdStarted = SD.begin(SD_CS_PIN);
+    for(int i = 0; !sdStarted && i < 10; i++) {
         Serial.println("SD card initialization failed!");
+        delay(500);
+        sdStarted = SD.begin(SD_CS_PIN);
+    }
+
+    if(!sdStarted) {
         return false;
     }
+
     File configFile = SD.open(configFilePath.c_str());
     if (!configFile) {
         Serial.println("Failed to open config file!");
         return false;
     }
     readValues();
+
     configFile.close();
+    configFile.flush();
     return true;
 }
 
@@ -58,11 +67,11 @@ void SettingsInitializer::readValues() {
     }
 }
 
-String SettingsInitializer::getValue(String key) {
+const char* SettingsInitializer::getValue(String key) {
     for (int i = 0; i < parameterCount; i++) {
         if (parameters[i].key == key) {
-            return parameters[i].value;
+            return parameters[i].value.c_str();
         }
     }
-    return String("");
+    return String("").c_str();
 }

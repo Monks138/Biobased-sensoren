@@ -23,7 +23,7 @@ public:
     ~SettingsInitializer();
 
     bool begin();
-    String getValue(String key);
+    const char* getValue(String key);
 };
 
 #endif

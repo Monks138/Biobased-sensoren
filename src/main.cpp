@@ -23,29 +23,19 @@
 #define CONFIG_FILE "settings.ini"
 #define CONFIG_VALUES_COUNT 3
 
-char wifiSSID[30];
-char wifiPassword[30];
-char sensorType[30];
-
 WiFiSSLClient wifi;
 HttpClient client = HttpClient(wifi, INFLUXDB_HOST, INFLUXDB_PORT);
-InfluxDB influxDB = InfluxDB(INFLUXDB_HOST, INFLUXDB_ORG, INFLUXDB_BUCKET, INFLUXDB_TOKEN);
+InfluxDB *influxDB;
 
 // sensors
-SGP30VOC sgp30(0x58);
-bool sgp30connected = true;
+Sensor *sensor;
 
-SCD30CO2 scd30sensor(0x61);
-bool scd30connected = false;
-
-HDC1080 hdc(0x00);
-bool hdc1080connected = false;
-
-String CONFIG_VALUES[] = {"WIFI-SSID", "WIFI-PASSWORD", "SENSOR-TYPE"};
+String CONFIG_VALUES[] = {"WIFI-SSID", "WIFI-PASSWORD", "SENSOR-TYPE", "ROOM"};
 SettingsInitializer settingsInitializer(CONFIG_VALUES,CONFIG_VALUES_COUNT, CONFIG_FILE);
 
 void connectToWifi();
-void loadFromSdCard();
+void checkSensorType();
+char* getMACAddressString();
 
 void setup()
 {
@@ -54,31 +44,6 @@ void setup()
     while(!Serial){}
 
     pinMode(PIN_CD, INPUT);
-
-    while(!SD.begin(PIN_SPI_CS)) {
-        Serial.println("SD CARD FAILED, OR NOT PRESENT!");
-        delay(1000);
-    }
-
-    loadFromSdCard();
-
-    if(!wifiSSID || !wifiPassword) {
-        Serial.println("WIFI Credentials not found. stopping...");
-        return;
-    }
-
-    connectToWifi();
-
-
-
-    Point point = Point().measurement("co2_sensor")
-        .addTag("room", "badkamer_guus")
-        .addTag("sensor_id", "00-00-00-00-00-03")
-        .addTag("unit", "ppm")
-        .addField("co2", 2.0);
-
-    influxDB.writePoint(point, client);
-    Serial.println("Hello world!");
 
     if (settingsInitializer.begin()) {
         Serial.println("Settings loaded successfully:");
@@ -89,44 +54,42 @@ void setup()
     } else {
         Serial.println("Failed to load settings");
     }
-     
-    if (sgp30connected)
-    {
-        sgp30.begin();
+
+    if(strcmp(settingsInitializer.getValue("SENSOR-TYPE"), "CO2") == 0) {
+        sensor = new SCD30CO2();
+    } else if(strcmp(settingsInitializer.getValue("SENSOR-TYPE"), "VOC") == 0) {
+        sensor = new SGP30VOC();
+    } else if(strcmp(settingsInitializer.getValue("SENSOR-TYPE"), "TEMPANDHUMIDITY") == 0) {
+        sensor = new HDC1080();
+    } else {
+        Serial.println("Invalid sensor type: ");
+        Serial.println("Sensortype: " + arduino::String(settingsInitializer.getValue("SENSOR-TYPE")));
+        exit(1);
     }
-    if (scd30connected)
-    {
-        scd30sensor.begin();
-    }
-    if (hdc1080connected)
-    {
-        hdc.begin();
-    }
+
+    sensor->begin();
+
+    Serial.println("Sensortype: " + arduino::String(settingsInitializer.getValue("SENSOR-TYPE")));
+
+    connectToWifi();
+
+    Serial.println("End of setup");
+    Serial.println("Sensortype: " + arduino::String(settingsInitializer.getValue("SENSOR-TYPE")));
+
+    influxDB = new InfluxDB(INFLUXDB_HOST, INFLUXDB_ORG, INFLUXDB_BUCKET, INFLUXDB_TOKEN);
 }
 
 void loop()
 {
-    Serial.println("Looping...");
-    if (sgp30connected)
-    {
-        Serial.print("sgp: ");
-        Serial.println(sgp30.measure());
-    }
-    if (scd30connected)
-    {
-        Serial.print("scd: ");
-        Serial.println(scd30sensor.measure());
-    }
-    if (hdc1080connected)
-    {
-        Serial.print("Temp: ");
-        Serial.println(hdc.measure());
-        Serial.print("Hum: ");
-        Serial.print(hdc.humidity());
-        Serial.println(" %");
+    SensorPoint point = sensor->getMeasurementPoints("badkamer_guus", getMACAddressString());
+
+    if(point.size > 1) {
+        influxDB->writePoints(point.points, point.size, client);
+    } else if(point.size == 1){
+        influxDB->writePoint(point.points[0], client);
     }
 
-    delay(2000);
+    delay(1000);
 }
 
 void connectToWifi() {
@@ -134,38 +97,19 @@ void connectToWifi() {
 
   while (status != WL_CONNECTED) {
     Serial.print("Attempting to connect to network: ");
-    Serial.println(wifiSSID);
-    status = WiFi.begin(wifiSSID, wifiPassword);
+    Serial.println(arduino::String(settingsInitializer.getValue("WIFI-SSID")));
+    status = WiFi.begin(settingsInitializer.getValue("WIFI-SSID"), settingsInitializer.getValue("WIFI-PASSWORD"));
     delay(10000);
   }
+  Serial.println("Connected to wifi!");
 }
 
-void loadFromSdCard() {
-    File envFile = SD.open(SETTINGS_FILE);
-    if (envFile) {
-        // Lees het bestand regel voor regel
-        while (envFile.available()) {
-        String line = envFile.readStringUntil('\n');
+char* getMACAddressString() {
+  byte mac[6];
+  WiFi.macAddress(mac);
 
-        int separatorIndex = line.indexOf(SEPERATOR_INDEX);
-        if (separatorIndex != -1) {
-            String key = line.substring(0, separatorIndex);
-            String value = line.substring(separatorIndex + 1);
+  char macStr[18];
+  sprintf(macStr, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 
-            key.trim();
-            value.trim();
-            if (key == "WIFI-SSID") {
-                value.toCharArray(wifiSSID, sizeof(wifiSSID));
-            } else if (key == "WIFI-PASSWORD") {
-                value.toCharArray(wifiPassword, sizeof(wifiPassword));
-            } else if (key == "SENSOR-TYPE") {
-                value.toCharArray(sensorType, sizeof(sensorType));
-                }
-            }
-        }
-    envFile.close();
-    } else {
-        Serial.print("Fout bij het openen van ");
-        Serial.println(SETTINGS_FILE);
-    }
+  return macStr;
 }

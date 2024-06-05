@@ -7,10 +7,11 @@
 class SCD30CO2 : public Sensor
 {
 public:
-    SCD30CO2(uint8_t i2cAddress);
+    SCD30CO2();
     void begin() override;
     // Measure CO2 and return the value (ppm)
     float measure() override;
+    SensorPoint getMeasurementPoints(char* room, char* macAddress) override;
 
 private:
     SCD30 scd30sensor;
