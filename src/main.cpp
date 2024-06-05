@@ -8,6 +8,7 @@
 #include <WiFiNINA.h>
 #include <ArduinoHttpClient.h>
 #include "InfluxDB.h"
+#include "RGBLed.h"
 
 #define PIN_CD 7
 
@@ -20,12 +21,18 @@
 #define CONFIG_FILE "settings.ini"
 #define CONFIG_VALUES_COUNT 5
 
+#define STATUS_LED_RED A6
+#define STATUS_LED_GREEN A7
+#define STATUS_LED_BLUE A2
+
 WiFiSSLClient wifi;
 HttpClient client = HttpClient(wifi, INFLUXDB_HOST, INFLUXDB_PORT);
 InfluxDB *influxDB;
 
 // sensors
 Sensor *sensor;
+
+RGBLed statusLed(STATUS_LED_RED, STATUS_LED_GREEN, STATUS_LED_BLUE);
 
 String CONFIG_VALUES[] = {"WIFI-SSID", "WIFI-PASSWORD", "SENSOR-TYPE", "ROOM", "UPDATE-TIME"};
 SettingsInitializer settingsInitializer(CONFIG_VALUES,CONFIG_VALUES_COUNT, CONFIG_FILE);
@@ -41,6 +48,7 @@ void setup()
     while(!Serial){}
 
     pinMode(PIN_CD, INPUT);
+    statusLed.setColor(255, 0,0);
 
     if (settingsInitializer.begin()) {
         Serial.println("Settings loaded successfully:");
