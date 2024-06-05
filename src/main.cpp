@@ -26,7 +26,9 @@ char sensorType[30];
 
 WiFiSSLClient wifi;
 HttpClient client = HttpClient(wifi, INFLUXDB_HOST, INFLUXDB_PORT);
+InfluxDB influxDB = InfluxDB(INFLUXDB_HOST, INFLUXDB_ORG, INFLUXDB_BUCKET, INFLUXDB_TOKEN);
 
+// sensors
 SGP30VOC sgp30(0x58);
 bool sgp30connected = false;
 
@@ -58,7 +60,7 @@ void setup()
 
     connectToWifi();
 
-    InfluxDB influxDB = InfluxDB(INFLUXDB_HOST, INFLUXDB_ORG, INFLUXDB_BUCKET, INFLUXDB_TOKEN);
+
 
     Point point = Point().measurement("co2_sensor")
         .addTag("room", "badkamer_guus")
