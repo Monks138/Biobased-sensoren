@@ -3,15 +3,18 @@
 
 #include <Arduino.h>
 #include <Wire.h>
+#include "Point.h"
+#include "WiFiNINA.h"
 
 class Sensor {
 public:
-    Sensor(uint8_t i2cAddress);
+    Sensor();
     virtual void begin() = 0;
     virtual float measure() = 0;
+    virtual Point* getMeasurementPoints(char* room, char* macAddress) = 0;
+
 
 protected:
-    uint8_t i2cAddr;
     float offset;
 };
 

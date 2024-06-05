@@ -2,7 +2,7 @@
 
 
 
-HDC1080::HDC1080(uint8_t i2cAddress) : Sensor(i2cAddress), hdc()
+HDC1080::HDC1080() : Sensor(), hdc()
 {
 }
 
@@ -36,4 +36,8 @@ float HDC1080::measure()
 float HDC1080::humidity()
 {
     return hdc.readHumidity();
+}
+
+Point* HDC1080::getMeasurementPoints(char* room, char* macAddress) {
+    return nullptr;
 }

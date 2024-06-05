@@ -7,10 +7,11 @@
 class HDC1080 : public Sensor
 {
 public:
-    HDC1080(uint8_t i2cAddress);
+    HDC1080();
     void begin() override;
     float measure() override;
     float humidity();
+    Point* getMeasurementPoints(char* room, char* macAddress) override;
 
 private:
     ClosedCube_HDC1080 hdc;

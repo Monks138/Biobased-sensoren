@@ -17,6 +17,7 @@ InfluxDB::~InfluxDB() {
 }
 
 void InfluxDB::writePoint(Point point, HttpClient& client) {
+    Serial.println("Preparing to write data to InfluxDB");
     arduino::String data = point.toLineProtocol();
 
     float temperature = 24.5;
@@ -25,7 +26,6 @@ void InfluxDB::writePoint(Point point, HttpClient& client) {
     String exampleData = "environment,device=arduino_nano temperature=" + String(temperature) + ",humidity=" + String(humidity);
     Serial.print("Expected data like: ");
     Serial.println(exampleData);
-
 
     String url = "/write?db=" + String(this->influxdb_bucket);
 
