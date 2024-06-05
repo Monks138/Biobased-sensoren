@@ -22,12 +22,14 @@ SettingsInitializer::~SettingsInitializer() {
 }
 
 bool SettingsInitializer::begin() {
-    for(int i = 0; !SD.begin(SD_CS_PIN) && i < 10; i++) {
+    bool sdStarted = SD.begin(SD_CS_PIN);
+    for(int i = 0; !sdStarted && i < 10; i++) {
         Serial.println("SD card initialization failed!");
         delay(500);
+        sdStarted = SD.begin(SD_CS_PIN);
     }
 
-    if(!SD.begin(SD_CS_PIN)) {
+    if(!sdStarted) {
         return false;
     }
 
