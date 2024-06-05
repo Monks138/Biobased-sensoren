@@ -35,7 +35,7 @@ SettingsInitializer settingsInitializer(CONFIG_VALUES,CONFIG_VALUES_COUNT, CONFI
 
 void connectToWifi();
 void checkSensorType();
-arduino::String getMACAddressString();
+char* getMACAddressString();
 
 void setup()
 {
@@ -62,11 +62,14 @@ void setup()
     } else if(strcmp(settingsInitializer.getValue("SENSOR-TYPE"), "TEMPANDHUMIDITY") == 0) {
         sensor = new HDC1080();
     } else {
-        Serial.println("Invalid sensor type");
+        Serial.println("Invalid sensor type: ");
+        Serial.println("Sensortype: " + arduino::String(settingsInitializer.getValue("SENSOR-TYPE")));
         exit(1);
     }
 
     sensor->begin();
+
+    Serial.println("Sensortype: " + arduino::String(settingsInitializer.getValue("SENSOR-TYPE")));
 
     connectToWifi();
 
@@ -78,18 +81,14 @@ void setup()
 
 void loop()
 {
-    float measurement = sensor->measure();
-    Serial.println("measured data, going to make point");
+    SensorPoint point = sensor->getMeasurementPoints("badkamer_guus", getMACAddressString());
 
-    Point point = Point().measurement("co2_sensor")
-        .addTag("room", "badkamer_guus")
-        .addTag("sensor_id", getMACAddressString().c_str())
-        .addTag("unit", "ppm")
-        .addField("co2", measurement);
-    Serial.println("Data measured!");
+    if(point.size > 1) {
+        influxDB->writePoints(point.points, point.size, client);
+    } else if(point.size == 1){
+        influxDB->writePoint(point.points[0], client);
+    }
 
-    influxDB->writePoint(point, client);
-    Serial.println("Data sent to InfluxDB!");
     delay(1000);
 }
 
@@ -105,12 +104,12 @@ void connectToWifi() {
   Serial.println("Connected to wifi!");
 }
 
-arduino::String getMACAddressString() {
+char* getMACAddressString() {
   byte mac[6];
   WiFi.macAddress(mac);
 
   char macStr[18];
   sprintf(macStr, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 
-  return arduino::String(macStr);
+  return macStr;
 }

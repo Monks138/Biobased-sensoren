@@ -38,6 +38,25 @@ float HDC1080::humidity()
     return hdc.readHumidity();
 }
 
-Point* HDC1080::getMeasurementPoints(char* room, char* macAddress) {
-    return nullptr;
+SensorPoint HDC1080::getMeasurementPoints(char* room, char* macAddress) {
+    SensorPoint sensorPoint = SensorPoint();
+    short size = 2;
+
+    sensorPoint.size = size;
+    sensorPoint.points = new Point[size];
+
+    sensorPoint.points[0] = Point().measurement("temperature_sensor")
+        .addTag("room", "badkamer_guus")
+        .addTag("sensor_id", "00-00-00-00-00-01")
+        .addTag("unit", "degrees_celsius")
+        .addField("temperature", this->measure());
+    sensorPoint.points[1] = Point().measurement("humidity_sensor")
+        .addTag("room", "badkamer_guus")
+        .addTag("sensor_id", "00-00-00-00-00-01")
+        .addTag("unit", "percentage")
+        .addField("humidity", this->humidity());
+    Serial.println("Data measured!");
+
+
+    return sensorPoint;
 }

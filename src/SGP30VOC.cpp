@@ -24,6 +24,8 @@ float SGP30VOC::measure() {
     return sgp.TVOC + offset;
 }
 
-Point* SGP30VOC::getMeasurementPoints(char* room, char* macAddress){
-    return nullptr;
+SensorPoint SGP30VOC::getMeasurementPoints(char* room, char* macAddress){
+    SensorPoint sensorPoint;
+
+    return sensorPoint;
 }
