@@ -20,6 +20,9 @@
 #define INFLUXDB_BUCKET "STU-TI-Biobased-2024"
 #define INFLUXDB_TOKEN "UCTCPxVZVeYbQJMcuNcuXW9tf-KhKn90zrQNBN-tddnLjnKrBrsYKkt-scqPx5N2nwvcghdpYchs638xOviHTA=="
 
+#define CONFIG_FILE "settings.ini"
+#define CONFIG_VALUES_COUNT 3
+
 char wifiSSID[30];
 char wifiPassword[30];
 char sensorType[30];
@@ -30,13 +33,19 @@ InfluxDB influxDB = InfluxDB(INFLUXDB_HOST, INFLUXDB_ORG, INFLUXDB_BUCKET, INFLU
 
 // sensors
 SGP30VOC sgp30(0x58);
-bool sgp30connected = false;
+bool sgp30connected = true;
 
 SCD30CO2 scd30sensor(0x61);
 bool scd30connected = false;
 
 HDC1080 hdc(0x00);
-bool hdc1080connected = true;
+bool hdc1080connected = false;
+
+String CONFIG_VALUES[] = {"WIFI-SSID", "WIFI-PASSWORD", "SENSOR-TYPE"};
+SettingsInitializer settingsInitializer(CONFIG_VALUES,CONFIG_VALUES_COUNT, CONFIG_FILE);
+
+void connectToWifi();
+void loadFromSdCard();
 
 void setup()
 {
