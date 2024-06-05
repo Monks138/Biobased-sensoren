@@ -90,7 +90,7 @@ void loop()
 
     String updateTime = settingsInitializer.getValue("UPDATE-TIME");
     int updateTimeInMilli = updateTime.toInt();
-    delay(1000);
+    delay(updateTimeInMilli);
 }
 
 void connectToWifi() {
