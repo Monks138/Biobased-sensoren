@@ -9,43 +9,41 @@
     </generated>
   </component>
   <component name="CMakeSettings">
-<<<<<<< Updated upstream
     <configurations>
       <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f34b3d35-362e-4288-a793-d4d9169b91c9" name="Changes" comment="Add PlatformIO settings, amend SettingsInitializer, and refactor main&#10;&#10;A new .idea/misc.xml and .idea/vcs.xml have been added, defining settings for PlatformIO. Changes have been made to the SettingsInitializer; the &quot;readValueFromConfig&quot; function was replaced by &quot;readValues&quot;, which has altered how parameter values are obtained. This change also required an adaptation in the associated .cpp file. Lastly, the main.cpp file has undergone restructuring: SettingsInitializer is called before sensor initialization to ensure config values are available at setup.">
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="a2b768a2-cadb-4b11-9eac-21fa34e758b7" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Biobased-sensoren.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_6_4_2024_8_56_PM_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_6_4_2024_8_56_PM_[Changes]1/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_6_4_2024_8_56_PM__Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_6_4_2024_8_56_PM__Changes_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/StatusManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/StatusManager.cpp" afterDir="false" />
     </list>
-=======
-    <configurations />
-  </component>
-  <component name="ChangeListManager">
-    <list default="true" id="e5e5901c-9956-4681-816c-2b02265840e0" name="Changes" comment="Add new workspace configuration file&#10;&#10;Generated a fresh .idea/workspace.xml file that contains the configuration settings of the project, including PlatformIO settings, CMake configuration, Git settings, and various project properties." />
->>>>>>> Stashed changes
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-<<<<<<< Updated upstream
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-=======
->>>>>>> Stashed changes
   <component name="ExecutionTargetManager" SELECTED_TARGET="nano_33_iot" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
     </projectState>
   </component>
-<<<<<<< Updated upstream
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="feature/SDCardOO" />
+        <entry key="$PROJECT_DIR$" value="feature/extendSD" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -53,8 +51,6 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-=======
->>>>>>> Stashed changes
   <component name="PlatformioLocalSettings">
     <option name="availableProjects">
       <map>
@@ -82,16 +78,15 @@
       </map>
     </option>
   </component>
-<<<<<<< Updated upstream
   <component name="ProjectApplicationVersion">
     <option name="ide" value="CLion" />
     <option name="majorVersion" value="2023" />
     <option name="minorVersion" value="3.4" />
   </component>
-  <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 2
-}</component>
-  <component name="ProjectId" id="2hQLi7vQWcJQK77uaWIPVCvI8vP" />
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 4
+}]]></component>
+  <component name="ProjectId" id="2hY2tN2bK2HLF9uu5Ahv6ctUeIK" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -105,8 +100,8 @@
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "feature/SDCardOO",
-    "last_opened_file_path": "C:/Users/Merij/Documents/GitHub/Biobased-sensoren",
+    "git-widget-placeholder": "feature/extendSD",
+    "last_opened_file_path": "C:/Users/Merij/OneDrive/Documents/GitHub/Biobased-sensoren/platformio.ini",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -115,8 +110,6 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-=======
->>>>>>> Stashed changes
   <component name="RunManager">
     <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
@@ -127,47 +120,22 @@
       <method v="2" />
     </configuration>
   </component>
-<<<<<<< Updated upstream
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="f34b3d35-362e-4288-a793-d4d9169b91c9" name="Changes" comment="" />
-      <created>1717521479910</created>
+      <changelist id="a2b768a2-cadb-4b11-9eac-21fa34e758b7" name="Changes" comment="" />
+      <created>1717756904132</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1717521479910</updated>
-      <workItem from="1717521481574" duration="3142000" />
+      <updated>1717756904132</updated>
+      <workItem from="1717756905305" duration="393000" />
     </task>
-    <task id="LOCAL-00001" summary="Add PlatformIO settings, amend SettingsInitializer, and refactor main&#10;&#10;A new .idea/misc.xml and .idea/vcs.xml have been added, defining settings for PlatformIO. Changes have been made to the SettingsInitializer; the &quot;readValueFromConfig&quot; function was replaced by &quot;readValues&quot;, which has altered how parameter values are obtained. This change also required an adaptation in the associated .cpp file. Lastly, the main.cpp file has undergone restructuring: SettingsInitializer is called before sensor initialization to ensure config values are available at setup.">
-      <option name="closed" value="true" />
-      <created>1717526911613</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1717526911613</updated>
-    </task>
-    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
-    <option name="RECENT_FILTERS">
-      <map>
-        <entry key="Branch">
-          <value>
-            <list>
-              <RecentGroup>
-                <option name="FILTER_VALUES">
-                  <option value="main" />
-                </option>
-              </RecentGroup>
-            </list>
-          </value>
-        </entry>
-      </map>
-    </option>
     <option name="TAB_STATES">
       <map>
         <entry key="MAIN">
@@ -179,12 +147,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Add PlatformIO settings, amend SettingsInitializer, and refactor main&#10;&#10;A new .idea/misc.xml and .idea/vcs.xml have been added, defining settings for PlatformIO. Changes have been made to the SettingsInitializer; the &quot;readValueFromConfig&quot; function was replaced by &quot;readValues&quot;, which has altered how parameter values are obtained. This change also required an adaptation in the associated .cpp file. Lastly, the main.cpp file has undergone restructuring: SettingsInitializer is called before sensor initialization to ensure config values are available at setup." />
-    <option name="LAST_COMMIT_MESSAGE" value="Add PlatformIO settings, amend SettingsInitializer, and refactor main&#10;&#10;A new .idea/misc.xml and .idea/vcs.xml have been added, defining settings for PlatformIO. Changes have been made to the SettingsInitializer; the &quot;readValueFromConfig&quot; function was replaced by &quot;readValues&quot;, which has altered how parameter values are obtained. This change also required an adaptation in the associated .cpp file. Lastly, the main.cpp file has undergone restructuring: SettingsInitializer is called before sensor initialization to ensure config values are available at setup." />
+    <option name="LAST_COMMIT_MESSAGE" value="" />
   </component>
-=======
-  <component name="TaskManager">
-    <servers />
-  </component>
->>>>>>> Stashed changes
 </project>

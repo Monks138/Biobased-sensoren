@@ -12,7 +12,7 @@
 // Private constructor definitie
 StatusManager::StatusManager() : _rgbLed(STATUS_LED_RED, STATUS_LED_GREEN, STATUS_LED_BLUE) {
     Serial.println("StatusManager initialized.");
-    setStatus(Colors::Orange);
+    setStatus(Colors::Blue);
 }
 
 // Singleton getInstance methode
