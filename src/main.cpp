@@ -38,11 +38,11 @@ arduino::String getMACAddressString();
 
 void setup()
 {
-    Serial.begin(115200);
-
-    while(!Serial){}
-
     StatusManager::getInstance();
+    delay(5000);
+    Serial.begin(115200);
+// Only for debugging
+//    while(!Serial){}
 
 
     settingsInitializer.begin();
@@ -78,6 +78,9 @@ void setup()
 void loop()
 {
     StatusManager::getInstance().update();
+    if(WiFi.status() != 3) {
+        connectToWifi();
+    }
 
     float measurement = sensor->measure();
     Serial.println("measured data, going to make point");
@@ -94,6 +97,8 @@ void loop()
 
     String updateTime = settingsInitializer.getValue("UPDATE-TIME");
     int updateTimeInMilli = updateTime.toInt();
+
+    Serial.println("Status: " + String(WiFi.status()));
     delay(updateTimeInMilli);
 }
 
