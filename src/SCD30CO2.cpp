@@ -1,6 +1,6 @@
 #include "SCD30CO2.h"
 
-SCD30CO2::SCD30CO2(uint8_t i2cAddress) : Sensor(i2cAddress), scd30sensor()
+SCD30CO2::SCD30CO2() : Sensor(), scd30sensor()
 {
 }
 
@@ -27,4 +27,11 @@ float SCD30CO2::measure()
     float result[3];
     scd30sensor.getCarbonDioxideConcentration(result);
     return result[0] + offset;
+}
+
+SensorPoint SCD30CO2::getMeasurementPoints(char* room, char* macAddress)
+{
+    SensorPoint sensorPoint;
+
+    return sensorPoint;
 }

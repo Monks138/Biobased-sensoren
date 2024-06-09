@@ -1,6 +1,6 @@
 #include "SGP30VOC.h"
 
-SGP30VOC::SGP30VOC(uint8_t i2cAddress) : Sensor(i2cAddress), sgp() {
+SGP30VOC::SGP30VOC() : Sensor(), sgp() {
 }
 
 void SGP30VOC::begin() {
@@ -22,4 +22,10 @@ float SGP30VOC::measure() {
         return -1.0;
     }
     return sgp.TVOC + offset;
+}
+
+SensorPoint SGP30VOC::getMeasurementPoints(char* room, char* macAddress){
+    SensorPoint sensorPoint;
+
+    return sensorPoint;
 }

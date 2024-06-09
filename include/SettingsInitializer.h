@@ -22,8 +22,8 @@ public:
     SettingsInitializer(String keys[],int keyCount, String filePath);
     ~SettingsInitializer();
 
-    bool begin();
-    String getValue(String key);
+    void begin();
+    const char* getValue(String key);
 };
 
 #endif

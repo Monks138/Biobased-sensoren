@@ -2,10 +2,12 @@
 // Created by Merijn on 6/4/2024.
 //
 #include "SettingsInitializer.h"
+#include "Color.h"
+#include "StatusManager.h"
 #include <SPI.h>
 #include <SD.h>
 
-#define SD_CS_PIN 10  // Chip select pin for SD card module
+#define SD_CS_PIN 4  // Chip select pin for SD card module
 
 SettingsInitializer::SettingsInitializer(String keys[], int keyCount, String filePath) {
     parameterCount = keyCount;
@@ -21,19 +23,27 @@ SettingsInitializer::~SettingsInitializer() {
     delete[] parameters;
 }
 
-bool SettingsInitializer::begin() {
-    if (!SD.begin(SD_CS_PIN)) {
+void SettingsInitializer::begin() {
+    bool sdStarted = SD.begin(SD_CS_PIN);
+    for(int i = 0; i < 10 && !sdStarted; i++) {
         Serial.println("SD card initialization failed!");
-        return false;
+        delay(1000);
+        sdStarted = SD.begin(SD_CS_PIN);
+
     }
+
+    if(!sdStarted) {
+        StatusManager::getInstance().error("SD-Card not found", Colors::Red);
+    }
+
     File configFile = SD.open(configFilePath.c_str());
     if (!configFile) {
-        Serial.println("Failed to open config file!");
-        return false;
+        StatusManager::getInstance().error("SD-Card config file not found", Colors::Yellow);
     }
     readValues();
+
     configFile.close();
-    return true;
+    configFile.flush();
 }
 
 void SettingsInitializer::readValues() {
@@ -58,11 +68,11 @@ void SettingsInitializer::readValues() {
     }
 }
 
-String SettingsInitializer::getValue(String key) {
+const char* SettingsInitializer::getValue(String key) {
     for (int i = 0; i < parameterCount; i++) {
         if (parameters[i].key == key) {
-            return parameters[i].value;
+            return parameters[i].value.c_str();
         }
     }
-    return String("");
+    return String("").c_str();
 }
