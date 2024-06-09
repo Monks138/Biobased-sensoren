@@ -33,8 +33,7 @@ String CONFIG_VALUES[] = {"WIFI-SSID", "WIFI-PASSWORD", "SENSOR-TYPE", "ROOM", "
 SettingsInitializer settingsInitializer(CONFIG_VALUES,CONFIG_VALUES_COUNT, CONFIG_FILE);
 
 void connectToWifi();
-
-arduino::String getMACAddressString();
+char* getMACAddressString();
 
 void setup()
 {
@@ -64,6 +63,8 @@ void setup()
 
     sensor->begin();
 
+    Serial.println("Sensortype: " + arduino::String(settingsInitializer.getValue("SENSOR-TYPE")));
+
     connectToWifi();
 
     Serial.println("End of setup");
@@ -81,19 +82,13 @@ void loop()
     if(WiFi.status() != 3) {
         connectToWifi();
     }
+    SensorPoint point = sensor->getMeasurementPoints("badkamer_guus", getMACAddressString());
 
-    float measurement = sensor->measure();
-    Serial.println("measured data, going to make point");
-
-    Point point = Point().measurement("co2_sensor")
-        .addTag("room", settingsInitializer.getValue("ROOM"))
-        .addTag("sensor_id", getMACAddressString().c_str())
-        .addTag("unit", "ppm")
-        .addField("co2", measurement);
-    Serial.println("Data measured!");
-
-    influxDB->writePoint(point, client);
-    Serial.println("Data sent to InfluxDB!");
+    if(point.size > 1) {
+        influxDB->writePoints(point.points, point.size, client);
+    } else if(point.size == 1){
+        influxDB->writePoint(point.points[0], client);
+    }
 
     String updateTime = settingsInitializer.getValue("UPDATE-TIME");
     int updateTimeInMilli = updateTime.toInt();
@@ -123,12 +118,12 @@ void connectToWifi() {
   Serial.println("Connected to wifi!");
 }
 
-arduino::String getMACAddressString() {
+char* getMACAddressString() {
   byte mac[6];
   WiFi.macAddress(mac);
 
   char macStr[18];
   sprintf(macStr, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 
-  return {macStr};
+  return macStr;
 }

@@ -11,7 +11,7 @@ public:
     void begin() override;
     float measure() override;
     float humidity();
-    Point* getMeasurementPoints(char* room, char* macAddress) override;
+    SensorPoint getMeasurementPoints(char* room, char* macAddress) override;
 
 private:
     ClosedCube_HDC1080 hdc;
