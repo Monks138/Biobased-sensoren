@@ -13,13 +13,14 @@ const long utcOffsetSummer = 7200; // Offset from UTC in seconds (7200 seconds =
 
 class Log {
     public:
-        Log(bool writeToCard = false);
+        Log();
         ~Log();
-        void info(char* message);
-        void error(char* message);
+        static Log& getInstance();
+        void info(const arduino::String &message);
+        void error(const arduino::String &message);
     private:
-        void writeToCard(char* level, char* message);
-        bool writeDataToCard;
+        void writeToCard(const arduino::String &level, const arduino::String &message);
+        void serialPrintTime();
         WiFiUDP* udpSocket;
         NTPClient* ntpClient;
 };

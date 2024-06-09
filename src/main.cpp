@@ -9,6 +9,7 @@
 #include <ArduinoHttpClient.h>
 #include "InfluxDB.h"
 #include "StatusManager.h"
+#include "Log.h"
 
 #define PIN_CD 7
 
@@ -39,41 +40,52 @@ void setup()
 {
     StatusManager::getInstance();
     delay(5000);
+
     Serial.begin(115200);
+
+    delay(100);
+    Log::getInstance();
+
 // Only for debugging
 //    while(!Serial){}
 
-
     settingsInitializer.begin();
-    Serial.println("Settings loaded successfully:");
+    Log::getInstance().info("Settings loaded successfully");
     for (const auto & i : CONFIG_VALUES) {
-        Serial.print(i + ": ");
-        Serial.println(settingsInitializer.getValue(i));
+        Log::getInstance().info(i + ": " + settingsInitializer.getValue(i));
     }
 
     if(strcmp(settingsInitializer.getValue("SENSOR-TYPE"), "CO2") == 0) {
         sensor = new SCD30CO2();
+        Log::getInstance().info("Sensor type: CO2");
     } else if(strcmp(settingsInitializer.getValue("SENSOR-TYPE"), "VOC") == 0) {
         sensor = new SGP30VOC();
+        Log::getInstance().info("Sensor type: VOC");
     } else if(strcmp(settingsInitializer.getValue("SENSOR-TYPE"), "TEMPANDHUMIDITY") == 0) {
         sensor = new HDC1080();
+        Log::getInstance().info("Sensor type: TEMPANDHUMIDITY");
     } else {
         StatusManager::getInstance().error("SensorType not found (that was stated in the config)", Colors::Cyan);
+        Log::getInstance().error("SensorType not found (that was stated in the config)");
     }
 
     sensor->begin();
 
-    Serial.println("Sensortype: " + arduino::String(settingsInitializer.getValue("SENSOR-TYPE")));
+    Log::getInstance().info("Sensortype" + arduino::String(settingsInitializer.getValue("SENSOR-TYPE")));
+    // Serial.println("Sensortype: " + arduino::String(settingsInitializer.getValue("SENSOR-TYPE")));
 
     connectToWifi();
 
-    Serial.println("End of setup");
-    Serial.println("Sensortype: " + arduino::String(settingsInitializer.getValue("SENSOR-TYPE")));
+
+    // Serial.println("End of setup");
+    // Serial.println("Sensortype: " + arduino::String(settingsInitializer.getValue("SENSOR-TYPE")));
 
     influxDB = new InfluxDB(INFLUXDB_HOST, INFLUXDB_ORG, INFLUXDB_BUCKET, INFLUXDB_TOKEN);
 
     StatusManager::getInstance().setStatus(Colors::Green);
     StatusManager::getInstance().setCurrentTime();
+
+    Log::getInstance().info("End of setup");
 }
 
 void loop()
@@ -84,14 +96,22 @@ void loop()
     }
     SensorPoint point = sensor->getMeasurementPoints("badkamer_guus", getMACAddressString());
 
+    int statusCode = -1;
     if(point.size > 1) {
-        influxDB->writePoints(point.points, point.size, client);
+        statusCode = influxDB->writePoints(point.points, point.size, client);
     } else if(point.size == 1){
-        influxDB->writePoint(point.points[0], client);
+        statusCode = influxDB->writePoint(point.points[0], client);
+    }
+
+    delete point.points;
+
+    if(statusCode != 204) {
+        StatusManager::getInstance().error("Could not write to InfluxDB", Colors::Red);
     }
 
     String updateTime = settingsInitializer.getValue("UPDATE-TIME");
     int updateTimeInMilli = updateTime.toInt();
+
 
     Serial.println("Status: " + String(WiFi.status()));
     delay(updateTimeInMilli);
@@ -103,8 +123,9 @@ void connectToWifi() {
   int count = 0;
 
   while (status != WL_CONNECTED) {
-    Serial.print("Attempting to connect to network: ");
-    Serial.println(arduino::String(settingsInitializer.getValue("WIFI-SSID")));
+    Log::getInstance().info("Attempting to connect to network: " + arduino::String(settingsInitializer.getValue("WIFI-SSID")));
+    // Serial.print("Attempting to connect to network: ");
+    // Serial.println(arduino::String(settingsInitializer.getValue("WIFI-SSID")));
     status = WiFi.begin(settingsInitializer.getValue("WIFI-SSID"), settingsInitializer.getValue("WIFI-PASSWORD"));
     delay(10000);
     count++;
@@ -115,7 +136,9 @@ void connectToWifi() {
   if(status != WL_CONNECTED) {
       StatusManager::getInstance().error("Could not connect to WiFi", Colors::Orange);
   }
-  Serial.println("Connected to wifi!");
+
+  Log::getInstance().info("Connected to wifi!");
+//   Serial.println("Connected to wifi!");
 }
 
 char* getMACAddressString() {

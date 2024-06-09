@@ -16,14 +16,14 @@ InfluxDB::~InfluxDB() {
     delete this->influxdb_token;
 }
 
-void InfluxDB::writePoint(Point point, HttpClient& client) {
+int InfluxDB::writePoint(Point point, HttpClient& client) {
     arduino::String data = point.toLineProtocol();
 
-    String url = "/write?db=" + String(this->influxdb_bucket);
+    arduino::String url = "/write?db=" + arduino::String(this->influxdb_bucket);
 
     client.beginRequest();
     client.post(url);
-    client.sendHeader("Authorization", String("Token ") + String(this->influxdb_token));
+    client.sendHeader("Authorization", arduino::String("Token ") + arduino::String(this->influxdb_token));
     client.sendHeader("Content-Type", "application/x-www-form-urlencoded");
     client.sendHeader("Content-Length", data.length());
     client.beginBody();
@@ -31,15 +31,11 @@ void InfluxDB::writePoint(Point point, HttpClient& client) {
     client.endRequest();
 
     int statusCode = client.responseStatusCode();
-    String response = client.responseBody();
 
-    Serial.print("Status code: ");
-    Serial.println(statusCode);
-    Serial.print("Response: ");
-    Serial.println(response);
+    return statusCode;
 }
 
-void InfluxDB::writePoints(Point* points, short size, HttpClient& client) {
+int InfluxDB::writePoints(Point* points, short size, HttpClient& client) {
     arduino::String data;
     for (int i = 0; i < size; i++) {
         data += points[i].toLineProtocol();
@@ -48,11 +44,11 @@ void InfluxDB::writePoints(Point* points, short size, HttpClient& client) {
         }
     }
 
-    String url = "/write?db=" + String(this->influxdb_bucket);
+    arduino::String url = "/write?db=" + arduino::String(this->influxdb_bucket);
 
     client.beginRequest();
     client.post(url);
-    client.sendHeader("Authorization", String("Token ") + String(this->influxdb_token));
+    client.sendHeader("Authorization", arduino::String("Token ") + arduino::String(this->influxdb_token));
     client.sendHeader("Content-Type", "application/x-www-form-urlencoded");
     client.sendHeader("Content-Length", data.length());
     client.beginBody();
@@ -60,11 +56,7 @@ void InfluxDB::writePoints(Point* points, short size, HttpClient& client) {
     client.endRequest();
 
     int statusCode = client.responseStatusCode();
-    String response = client.responseBody();
 
-    Serial.print("Status code: ");
-    Serial.println(statusCode);
-    Serial.print("Response: ");
-    Serial.println(response);
+    return statusCode;
 }
     

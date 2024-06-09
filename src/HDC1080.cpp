@@ -55,8 +55,6 @@ SensorPoint HDC1080::getMeasurementPoints(char* room, char* macAddress) {
         .addTag("sensor_id", "00-00-00-00-00-01")
         .addTag("unit", "percentage")
         .addField("humidity", this->humidity());
-    Serial.println("Data measured!");
-
 
     return sensorPoint;
 }
