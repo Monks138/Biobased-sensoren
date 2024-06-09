@@ -8,11 +8,9 @@
 #include <WiFiNINA.h>
 #include <ArduinoHttpClient.h>
 #include "InfluxDB.h"
+#include "StatusManager.h"
 
-#define PIN_SPI_CS 4
 #define PIN_CD 7
-#define SETTINGS_FILE "settings.ini"
-#define SEPERATOR_INDEX '='
 
 #define INFLUXDB_HOST "influx-playground.sendlab.nl"
 #define INFLUXDB_ORG "Sendlab"
@@ -21,7 +19,8 @@
 #define INFLUXDB_TOKEN "UCTCPxVZVeYbQJMcuNcuXW9tf-KhKn90zrQNBN-tddnLjnKrBrsYKkt-scqPx5N2nwvcghdpYchs638xOviHTA=="
 
 #define CONFIG_FILE "settings.ini"
-#define CONFIG_VALUES_COUNT 3
+#define CONFIG_VALUES_COUNT 5
+
 
 WiFiSSLClient wifi;
 HttpClient client = HttpClient(wifi, INFLUXDB_HOST, INFLUXDB_PORT);
@@ -30,29 +29,26 @@ InfluxDB *influxDB;
 // sensors
 Sensor *sensor;
 
-String CONFIG_VALUES[] = {"WIFI-SSID", "WIFI-PASSWORD", "SENSOR-TYPE", "ROOM"};
+String CONFIG_VALUES[] = {"WIFI-SSID", "WIFI-PASSWORD", "SENSOR-TYPE", "ROOM", "UPDATE-TIME"};
 SettingsInitializer settingsInitializer(CONFIG_VALUES,CONFIG_VALUES_COUNT, CONFIG_FILE);
 
 void connectToWifi();
-void checkSensorType();
 char* getMACAddressString();
 
 void setup()
 {
+    StatusManager::getInstance();
+    delay(5000);
     Serial.begin(115200);
+// Only for debugging
+//    while(!Serial){}
 
-    while(!Serial){}
 
-    pinMode(PIN_CD, INPUT);
-
-    if (settingsInitializer.begin()) {
-        Serial.println("Settings loaded successfully:");
-        for (int i = 0; i < 2; i++) {
-            Serial.print(CONFIG_VALUES[i] + ": ");
-            Serial.println(settingsInitializer.getValue(CONFIG_VALUES[i]));
-        }
-    } else {
-        Serial.println("Failed to load settings");
+    settingsInitializer.begin();
+    Serial.println("Settings loaded successfully:");
+    for (const auto & i : CONFIG_VALUES) {
+        Serial.print(i + ": ");
+        Serial.println(settingsInitializer.getValue(i));
     }
 
     if(strcmp(settingsInitializer.getValue("SENSOR-TYPE"), "CO2") == 0) {
@@ -62,9 +58,7 @@ void setup()
     } else if(strcmp(settingsInitializer.getValue("SENSOR-TYPE"), "TEMPANDHUMIDITY") == 0) {
         sensor = new HDC1080();
     } else {
-        Serial.println("Invalid sensor type: ");
-        Serial.println("Sensortype: " + arduino::String(settingsInitializer.getValue("SENSOR-TYPE")));
-        exit(1);
+        StatusManager::getInstance().error("SensorType not found (that was stated in the config)", Colors::Cyan);
     }
 
     sensor->begin();
@@ -77,10 +71,17 @@ void setup()
     Serial.println("Sensortype: " + arduino::String(settingsInitializer.getValue("SENSOR-TYPE")));
 
     influxDB = new InfluxDB(INFLUXDB_HOST, INFLUXDB_ORG, INFLUXDB_BUCKET, INFLUXDB_TOKEN);
+
+    StatusManager::getInstance().setStatus(Colors::Green);
+    StatusManager::getInstance().setCurrentTime();
 }
 
 void loop()
 {
+    StatusManager::getInstance().update();
+    if(WiFi.status() != 3) {
+        connectToWifi();
+    }
     SensorPoint point = sensor->getMeasurementPoints("badkamer_guus", getMACAddressString());
 
     if(point.size > 1) {
@@ -89,17 +90,30 @@ void loop()
         influxDB->writePoint(point.points[0], client);
     }
 
-    delay(1000);
+    String updateTime = settingsInitializer.getValue("UPDATE-TIME");
+    int updateTimeInMilli = updateTime.toInt();
+
+    Serial.println("Status: " + String(WiFi.status()));
+    delay(updateTimeInMilli);
 }
 
 void connectToWifi() {
-  int status = WL_IDLE_STATUS; 
+  int status = WL_IDLE_STATUS;
+
+  int count = 0;
 
   while (status != WL_CONNECTED) {
     Serial.print("Attempting to connect to network: ");
     Serial.println(arduino::String(settingsInitializer.getValue("WIFI-SSID")));
     status = WiFi.begin(settingsInitializer.getValue("WIFI-SSID"), settingsInitializer.getValue("WIFI-PASSWORD"));
     delay(10000);
+    count++;
+    if(count >= 10) {
+        break;
+    }
+  }
+  if(status != WL_CONNECTED) {
+      StatusManager::getInstance().error("Could not connect to WiFi", Colors::Orange);
   }
   Serial.println("Connected to wifi!");
 }

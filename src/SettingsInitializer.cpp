@@ -2,10 +2,12 @@
 // Created by Merijn on 6/4/2024.
 //
 #include "SettingsInitializer.h"
+#include "Color.h"
+#include "StatusManager.h"
 #include <SPI.h>
 #include <SD.h>
 
-#define SD_CS_PIN 10  // Chip select pin for SD card module
+#define SD_CS_PIN 4  // Chip select pin for SD card module
 
 SettingsInitializer::SettingsInitializer(String keys[], int keyCount, String filePath) {
     parameterCount = keyCount;
@@ -21,28 +23,27 @@ SettingsInitializer::~SettingsInitializer() {
     delete[] parameters;
 }
 
-bool SettingsInitializer::begin() {
+void SettingsInitializer::begin() {
     bool sdStarted = SD.begin(SD_CS_PIN);
-    for(int i = 0; !sdStarted && i < 10; i++) {
+    for(int i = 0; i < 10 && !sdStarted; i++) {
         Serial.println("SD card initialization failed!");
-        delay(500);
+        delay(1000);
         sdStarted = SD.begin(SD_CS_PIN);
+
     }
 
     if(!sdStarted) {
-        return false;
+        StatusManager::getInstance().error("SD-Card not found", Colors::Red);
     }
 
     File configFile = SD.open(configFilePath.c_str());
     if (!configFile) {
-        Serial.println("Failed to open config file!");
-        return false;
+        StatusManager::getInstance().error("SD-Card config file not found", Colors::Yellow);
     }
     readValues();
 
     configFile.close();
     configFile.flush();
-    return true;
 }
 
 void SettingsInitializer::readValues() {

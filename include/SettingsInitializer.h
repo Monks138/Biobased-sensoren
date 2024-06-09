@@ -22,7 +22,7 @@ public:
     SettingsInitializer(String keys[],int keyCount, String filePath);
     ~SettingsInitializer();
 
-    bool begin();
+    void begin();
     const char* getValue(String key);
 };
 
