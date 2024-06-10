@@ -14,16 +14,12 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a2b768a2-cadb-4b11-9eac-21fa34e758b7" name="Changes" comment="Update measure() in sensor classes and adjust InfluxDB write methods&#10;&#10;Refactored measure() methods in sensor classes SGP30VOC, SCD30CO2, and HDC1080 to return new SensorPoint structure instead of single Point. Enhanced InfluxDB to support writing multiple points. Other files adjusted to handle these changes.">
+    <list default="true" id="a2b768a2-cadb-4b11-9eac-21fa34e758b7" name="Changes" comment="Merge 'getMeasurementPoints' method and improve data measurements&#10;&#10;Changed parameter in 'getMeasurementPoints' from mutable to constant, and improved data measurement mechanisms in HDC1080, SCD30CO2 and SGP30VOC classes. Added additional logging for debugging.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/HDC1080.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/HDC1080.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/SCD30CO2.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/SCD30CO2.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/SGP30VOC.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/SGP30VOC.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/Sensor.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Sensor.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HDC1080.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/HDC1080.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/InfluxDB.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/InfluxDB.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SCD30CO2.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/SCD30CO2.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SGP30VOC.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/SGP30VOC.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/Log.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/Log.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Log.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Log.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SettingsInitializer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/SettingsInitializer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/StatusManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/StatusManager.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -43,7 +39,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="feature/extendSD" />
+        <entry key="$PROJECT_DIR$" value="feature/Logger" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -91,25 +87,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "PlatformIO.PlatformIO.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "feature/Logger",
-    "last_opened_file_path": "C:/Users/Merij/OneDrive/Documents/GitHub/Biobased-sensoren/platformio.ini",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;PlatformIO.PlatformIO.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature/Logger&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Merij/OneDrive/Documents/GitHub/Biobased-sensoren/platformio.ini&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
@@ -147,7 +143,7 @@
       <workItem from="1717951181911" duration="649000" />
       <workItem from="1717965564596" duration="758000" />
       <workItem from="1717966549566" duration="2261000" />
-      <workItem from="1718016521156" duration="2531000" />
+      <workItem from="1718016521156" duration="5784000" />
     </task>
     <task id="LOCAL-00001" summary="Remove unnecessary .idea files and modify StatusManager.cpp&#10;&#10;The .idea files related to the project's IDE settings were deleted as they are not needed for the actual functioning of the project. The StatusManager.cpp file was changed to set the status color to Blue instead of Orange.">
       <option name="closed" value="true" />
@@ -165,7 +161,15 @@
       <option name="project" value="LOCAL" />
       <updated>1717869263308</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Merge 'getMeasurementPoints' method and improve data measurements&#10;&#10;Changed parameter in 'getMeasurementPoints' from mutable to constant, and improved data measurement mechanisms in HDC1080, SCD30CO2 and SGP30VOC classes. Added additional logging for debugging.">
+      <option name="closed" value="true" />
+      <created>1718019266343</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1718019266343</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -187,6 +191,7 @@
     <MESSAGE value="Refactor .idea workspace and update main.cpp&#10;&#10;Removed unneeded .idea configuration files and restructured workspace.xml. The main.cpp file was also modified, particularly the setup and loop methods for better status management connection handling." />
     <MESSAGE value="Update SensorPoint structure and improve data measurement&#10;&#10;Replaced Point return type with updated SensorPoint in sensor classes' methods. Enhanced data measurement mechanism allow multiple sensor readings. Minor changes implemented in .idea workspace and main.cpp." />
     <MESSAGE value="Update measure() in sensor classes and adjust InfluxDB write methods&#10;&#10;Refactored measure() methods in sensor classes SGP30VOC, SCD30CO2, and HDC1080 to return new SensorPoint structure instead of single Point. Enhanced InfluxDB to support writing multiple points. Other files adjusted to handle these changes." />
-    <option name="LAST_COMMIT_MESSAGE" value="Update measure() in sensor classes and adjust InfluxDB write methods&#10;&#10;Refactored measure() methods in sensor classes SGP30VOC, SCD30CO2, and HDC1080 to return new SensorPoint structure instead of single Point. Enhanced InfluxDB to support writing multiple points. Other files adjusted to handle these changes." />
+    <MESSAGE value="Merge 'getMeasurementPoints' method and improve data measurements&#10;&#10;Changed parameter in 'getMeasurementPoints' from mutable to constant, and improved data measurement mechanisms in HDC1080, SCD30CO2 and SGP30VOC classes. Added additional logging for debugging." />
+    <option name="LAST_COMMIT_MESSAGE" value="Merge 'getMeasurementPoints' method and improve data measurements&#10;&#10;Changed parameter in 'getMeasurementPoints' from mutable to constant, and improved data measurement mechanisms in HDC1080, SCD30CO2 and SGP30VOC classes. Added additional logging for debugging." />
   </component>
 </project>

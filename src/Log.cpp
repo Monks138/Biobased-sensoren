@@ -2,7 +2,10 @@
 
 Log::Log() {
     this->ntpClient = new NTPClient(*udpSocket, "pool.ntp.org", utcOffsetSummer);
-    this->ntpClient->begin();
+}
+
+void Log::beginConnection() {
+    //this->ntpClient->begin();
 }
 
 Log::~Log() {
@@ -17,9 +20,9 @@ Log& Log::getInstance() {
 
 void Log::info(const arduino::String &message) {
     char* level = "INFO";
-    if(WiFi.status() == WL_CONNECTED) {
-        this->serialPrintTime();
-    }
+    //if(WiFi.status() == WL_CONNECTED) {
+   //     this->serialPrintTime();
+    //}
     Serial.print(level);
     Serial.print(": ");
     Serial.println(message);
@@ -28,11 +31,11 @@ void Log::info(const arduino::String &message) {
 
 void Log::error(const arduino::String &message) {
     char* level = "ERROR";
-    if(WiFi.status() == WL_CONNECTED) {
-        this->serialPrintTime();
-    } else {
-        Serial.print("[NO WIFI] ");
-    }
+//    if(WiFi.status() == WL_CONNECTED) {
+//        this->serialPrintTime();
+//    } else {
+//        Serial.print("[NO WIFI] ");
+//    }
     Serial.print(level);
     Serial.print(": ");
     Serial.println(message);
@@ -42,11 +45,11 @@ void Log::error(const arduino::String &message) {
 void Log::writeToCard(const arduino::String &level, const arduino::String &message) {
     File file = SD.open(fileName, FILE_WRITE);
     file.write("[");
-    if (WiFi.status() == WL_CONNECTED) {
-        file.write(ntpClient->getFormattedTime().c_str());
-    } else {
-        file.write("NO WIFI");
-    }
+//    if (WiFi.status() == WL_CONNECTED) {
+//        file.write(ntpClient->getFormattedTime().c_str());
+//    } else {
+//        file.write("NO WIFI");
+//    }
     file.write("] ");
     file.write(level.c_str());
     file.write(": ");

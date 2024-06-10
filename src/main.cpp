@@ -38,10 +38,9 @@ char* getMACAddressString();
 
 void setup()
 {
+    Serial.begin(115200);
     StatusManager::getInstance();
     delay(5000);
-
-    Serial.begin(115200);
 
 // Only for debugging
 //    while(!Serial){}
@@ -54,13 +53,10 @@ void setup()
 
     if(strcmp(settingsInitializer.getValue("SENSOR-TYPE"), "CO2") == 0) {
         sensor = new SCD30CO2();
-        Log::getInstance().info("Sensor type: CO2");
     } else if(strcmp(settingsInitializer.getValue("SENSOR-TYPE"), "VOC") == 0) {
         sensor = new SGP30VOC();
-        Log::getInstance().info("Sensor type: VOC");
     } else if(strcmp(settingsInitializer.getValue("SENSOR-TYPE"), "TEMPANDHUMIDITY") == 0) {
         sensor = new HDC1080();
-        Log::getInstance().info("Sensor type: TEMPANDHUMIDITY");
     } else {
         StatusManager::getInstance().error("SensorType not found (that was stated in the config)", Colors::Cyan);
         Log::getInstance().error("SensorType not found (that was stated in the config)");
@@ -69,13 +65,8 @@ void setup()
     sensor->begin();
 
     Log::getInstance().info("Sensortype" + arduino::String(settingsInitializer.getValue("SENSOR-TYPE")));
-    // Serial.println("Sensortype: " + arduino::String(settingsInitializer.getValue("SENSOR-TYPE")));
 
     connectToWifi();
-
-
-    // Serial.println("End of setup");
-    // Serial.println("Sensortype: " + arduino::String(settingsInitializer.getValue("SENSOR-TYPE")));
 
     influxDB = new InfluxDB(INFLUXDB_HOST, INFLUXDB_ORG, INFLUXDB_BUCKET, INFLUXDB_TOKEN);
 
@@ -90,6 +81,7 @@ void loop()
 {
     StatusManager::getInstance().update();
     if(WiFi.status() != 3) {
+        Log::getInstance().error("WiFi disconnected! Reconnecting...");
         connectToWifi();
     }
     SensorPoint point = sensor->getMeasurementPoints(settingsInitializer.getValue("ROOM"), getMACAddressString());
@@ -110,8 +102,7 @@ void loop()
     String updateTime = settingsInitializer.getValue("UPDATE-TIME");
     int updateTimeInMilli = updateTime.toInt();
 
-
-    Serial.println("Status: " + String(WiFi.status()));
+    Log::getInstance().info("WiFi Status: " + String(WiFi.status()));
     delay(updateTimeInMilli);
 }
 
@@ -134,7 +125,9 @@ void connectToWifi() {
   if(status != WL_CONNECTED) {
       StatusManager::getInstance().error("Could not connect to WiFi", Colors::Orange);
   }
-
+//  Serial.println("WIFI Connected");
+//  delay(1000);
+//  Log::getInstance().beginConnection();
   Log::getInstance().info("Connected to wifi!");
 //   Serial.println("Connected to wifi!");
 }
