@@ -20,6 +20,7 @@ void Log::info(const arduino::String &message) {
     this->serialPrintTime();
     Serial.print(level);
     Serial.print(": ");
+    Serial.println(message);
     writeToCard(level, message);
 }
 
