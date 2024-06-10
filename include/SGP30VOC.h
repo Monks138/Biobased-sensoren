@@ -10,7 +10,7 @@ public:
     void begin() override;
     // Measure TVOC (Total Volatile Organic Compounds) and return the value (ppb)
     float measure() override;
-    SensorPoint getMeasurementPoints(char* room, char* macAddress) override;
+    SensorPoint getMeasurementPoints(const char* room, char* macAddress) override;
 private:
     Adafruit_SGP30 sgp;
 };
