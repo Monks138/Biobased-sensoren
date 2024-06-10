@@ -94,7 +94,7 @@ void loop()
     if(WiFi.status() != 3) {
         connectToWifi();
     }
-    SensorPoint point = sensor->getMeasurementPoints("badkamer_guus", getMACAddressString());
+    SensorPoint point = sensor->getMeasurementPoints(settingsInitializer.getValue("ROOM"), getMACAddressString());
 
     int statusCode = -1;
     if(point.size > 1) {
@@ -142,11 +142,13 @@ void connectToWifi() {
 }
 
 char* getMACAddressString() {
-  byte mac[6];
-  WiFi.macAddress(mac);
+//  byte mac[6];
+//  WiFi.macAddress(mac);
+//
+//  char macStr[18];
+//  sprintf(macStr, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+//
+//  return macStr;
+    return "test-mac";
 
-  char macStr[18];
-  sprintf(macStr, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-
-  return macStr;
 }

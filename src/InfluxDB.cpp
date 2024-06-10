@@ -19,18 +19,26 @@ InfluxDB::~InfluxDB() {
 int InfluxDB::writePoint(Point point, HttpClient& client) {
     arduino::String data = point.toLineProtocol();
 
-    arduino::String url = "/write?db=" + arduino::String(this->influxdb_bucket);
+    String url = "/write?db=" + String(this->influxdb_bucket);
 
     client.beginRequest();
+    client.setTimeout(5000);
     client.post(url);
-    client.sendHeader("Authorization", arduino::String("Token ") + arduino::String(this->influxdb_token));
+    client.sendHeader("Authorization", String("Token ") + String(this->influxdb_token));
     client.sendHeader("Content-Type", "application/x-www-form-urlencoded");
     client.sendHeader("Content-Length", data.length());
     client.beginBody();
     client.print(data);
     client.endRequest();
 
+
     int statusCode = client.responseStatusCode();
+    String response = client.responseBody();
+
+    Serial.print("Status code: ");
+    Serial.println(statusCode);
+    Serial.print("Response: ");
+    Serial.println(response);
 
     return statusCode;
 }
@@ -44,11 +52,12 @@ int InfluxDB::writePoints(Point* points, short size, HttpClient& client) {
         }
     }
 
-    arduino::String url = "/write?db=" + arduino::String(this->influxdb_bucket);
+    String url = "/write?db=" + String(this->influxdb_bucket);
 
     client.beginRequest();
+    client.setTimeout(5000);
     client.post(url);
-    client.sendHeader("Authorization", arduino::String("Token ") + arduino::String(this->influxdb_token));
+    client.sendHeader("Authorization", String("Token ") + String(this->influxdb_token));
     client.sendHeader("Content-Type", "application/x-www-form-urlencoded");
     client.sendHeader("Content-Length", data.length());
     client.beginBody();
@@ -56,7 +65,13 @@ int InfluxDB::writePoints(Point* points, short size, HttpClient& client) {
     client.endRequest();
 
     int statusCode = client.responseStatusCode();
+    String response = client.responseBody();
+
+    Serial.print("Status code: ");
+    Serial.println(statusCode);
+    Serial.print("Response: ");
+    Serial.println(response);
 
     return statusCode;
 }
-    
+

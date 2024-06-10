@@ -29,9 +29,21 @@ float SCD30CO2::measure()
     return result[0] + offset;
 }
 
-SensorPoint SCD30CO2::getMeasurementPoints(char* room, char* macAddress)
+SensorPoint SCD30CO2::getMeasurementPoints(const char* room, char* macAddress)
 {
-    SensorPoint sensorPoint;
+    SensorPoint sensorPoint = SensorPoint();
+    short size = 1;
+
+    sensorPoint.size = size;
+    sensorPoint.points = new Point[size];
+
+    sensorPoint.points[0] = Point().measurement("co2_sensor")
+            .addTag("room", room)
+            .addTag("sensor_id", macAddress)
+            .addTag("unit", "ppm")
+            .addField("co2", this->measure());
+    Serial.println("Data measured!");
+
 
     return sensorPoint;
 }

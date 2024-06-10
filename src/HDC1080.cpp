@@ -8,7 +8,7 @@ HDC1080::HDC1080() : Sensor(), hdc()
 
 void HDC1080::begin()
 {
-    Wire.begin();
+//    Wire.begin();
     hdc.begin(0x40);
 
     while(hdc.readDeviceId() == 0xFF)
@@ -23,9 +23,10 @@ void HDC1080::begin()
 	Serial.println(hdc.readDeviceId(), HEX); // 0x1050 ID of the device
 	Serial.print("Device Serial Number=");
 	HDC1080_SerialNumber sernum = hdc.readSerialNumber();
-	char format[12];
+	char format[100];
 	sprintf(format, "%02X-%04X-%04X", sernum.serialFirst, sernum.serialMid, sernum.serialLast);
 	Serial.println(format);
+    Serial.println("Hai");
 }
 
 float HDC1080::measure()
@@ -38,7 +39,7 @@ float HDC1080::humidity()
     return hdc.readHumidity();
 }
 
-SensorPoint HDC1080::getMeasurementPoints(char* room, char* macAddress) {
+SensorPoint HDC1080::getMeasurementPoints(const char* room, char* macAddress) {
     SensorPoint sensorPoint = SensorPoint();
     short size = 2;
 
@@ -46,15 +47,17 @@ SensorPoint HDC1080::getMeasurementPoints(char* room, char* macAddress) {
     sensorPoint.points = new Point[size];
 
     sensorPoint.points[0] = Point().measurement("temperature_sensor")
-        .addTag("room", "badkamer_guus")
-        .addTag("sensor_id", "00-00-00-00-00-01")
+        .addTag("room", room)
+        .addTag("sensor_id", macAddress)
         .addTag("unit", "degrees_celsius")
         .addField("temperature", this->measure());
     sensorPoint.points[1] = Point().measurement("humidity_sensor")
-        .addTag("room", "badkamer_guus")
-        .addTag("sensor_id", "00-00-00-00-00-01")
+        .addTag("room", room)
+        .addTag("sensor_id", macAddress)
         .addTag("unit", "percentage")
         .addField("humidity", this->humidity());
+    Serial.println("Data measured!");
+
 
     return sensorPoint;
 }
