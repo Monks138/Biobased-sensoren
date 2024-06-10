@@ -4,6 +4,7 @@
 #include <SD.h>
 #include <NTPClient.h>
 #include <WiFiUdp.h>
+#include <WiFiNINA.h>
 
 #define fileName "log.txt"
 #define SD_CS_PIN 4 

@@ -17,7 +17,9 @@ Log& Log::getInstance() {
 
 void Log::info(const arduino::String &message) {
     char* level = "INFO";
-    this->serialPrintTime();
+    if(WiFi.status() == WL_CONNECTED) {
+        this->serialPrintTime();
+    }
     Serial.print(level);
     Serial.print(": ");
     Serial.println(message);
@@ -26,7 +28,11 @@ void Log::info(const arduino::String &message) {
 
 void Log::error(const arduino::String &message) {
     char* level = "ERROR";
-    this->serialPrintTime();
+    if(WiFi.status() == WL_CONNECTED) {
+        this->serialPrintTime();
+    } else {
+        Serial.print("[NO WIFI] ");
+    }
     Serial.print(level);
     Serial.print(": ");
     Serial.println(message);
@@ -36,7 +42,11 @@ void Log::error(const arduino::String &message) {
 void Log::writeToCard(const arduino::String &level, const arduino::String &message) {
     File file = SD.open(fileName, FILE_WRITE);
     file.write("[");
-    file.write(ntpClient->getFormattedTime().c_str());
+    if (WiFi.status() == WL_CONNECTED) {
+        file.write(ntpClient->getFormattedTime().c_str());
+    } else {
+        file.write("NO WIFI");
+    }
     file.write("] ");
     file.write(level.c_str());
     file.write(": ");

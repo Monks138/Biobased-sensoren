@@ -43,9 +43,6 @@ void setup()
 
     Serial.begin(115200);
 
-    delay(100);
-    Log::getInstance();
-
 // Only for debugging
 //    while(!Serial){}
 
@@ -85,6 +82,7 @@ void setup()
     StatusManager::getInstance().setStatus(Colors::Green);
     StatusManager::getInstance().setCurrentTime();
 
+    Log::getInstance();
     Log::getInstance().info("End of setup");
 }
 
