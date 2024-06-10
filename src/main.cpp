@@ -27,6 +27,8 @@ WiFiSSLClient wifi;
 HttpClient client = HttpClient(wifi, INFLUXDB_HOST, INFLUXDB_PORT);
 InfluxDB *influxDB;
 
+int updateTimeInMilli;
+
 // sensors
 Sensor *sensor;
 
@@ -41,6 +43,7 @@ void setup()
     Serial.begin(115200);
     StatusManager::getInstance();
     delay(5000);
+    Log::getInstance().info("Program Started!");
 
 // Only for debugging
 //    while(!Serial){}
@@ -75,34 +78,37 @@ void setup()
 
     Log::getInstance();
     Log::getInstance().info("End of setup");
+
+    String updateTime = settingsInitializer.getValue("UPDATE-TIME");
+    updateTimeInMilli = updateTime.toInt();
 }
 
 void loop()
 {
     StatusManager::getInstance().update();
+    Log::getInstance().info("WiFi Status: " + String(WiFi.status()));
     if(WiFi.status() != 3) {
         Log::getInstance().error("WiFi disconnected! Reconnecting...");
         connectToWifi();
     }
+    Log::getInstance().info("Retrieving data from sensors");
     SensorPoint point = sensor->getMeasurementPoints(settingsInitializer.getValue("ROOM"), getMACAddressString());
+    Log::getInstance().info("Measurements received");
 
     int statusCode = -1;
+    Log::getInstance().info("Writing points");
     if(point.size > 1) {
         statusCode = influxDB->writePoints(point.points, point.size, client);
     } else if(point.size == 1){
         statusCode = influxDB->writePoint(point.points[0], client);
     }
+    Log::getInstance().info("Points written");
 
     delete point.points;
 
     if(statusCode != 204) {
-        StatusManager::getInstance().error("Could not write to InfluxDB", Colors::Red);
+        Log::getInstance().error("Could not write to InfluxDB");
     }
-
-    String updateTime = settingsInitializer.getValue("UPDATE-TIME");
-    int updateTimeInMilli = updateTime.toInt();
-
-    Log::getInstance().info("WiFi Status: " + String(WiFi.status()));
     delay(updateTimeInMilli);
 }
 

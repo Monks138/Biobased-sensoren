@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <ArduinoHttpClient.h>
 #include "InfluxDB.h"
+#include "Log.h"
 
 InfluxDB::InfluxDB(char* influxdb_url, char* influxdb_org, char* influxdb_bucket, char* influxdb_token) {
     this->influxdb_url = influxdb_url;
@@ -20,6 +21,7 @@ int InfluxDB::writePoint(Point point, HttpClient& client) {
     arduino::String data = point.toLineProtocol();
 
     String url = "/write?db=" + String(this->influxdb_bucket);
+    Log::getInstance().info("Sending request");
 
     client.beginRequest();
     client.setTimeout(5000);
@@ -32,13 +34,13 @@ int InfluxDB::writePoint(Point point, HttpClient& client) {
     client.endRequest();
 
 
+    Log::getInstance().info("Request send");
+
     int statusCode = client.responseStatusCode();
     String response = client.responseBody();
 
-    Serial.print("Status code: ");
-    Serial.println(statusCode);
-    Serial.print("Response: ");
-    Serial.println(response);
+    Log::getInstance().info("Data received");
+    Log::getInstance().info("Response: " + response);
 
     return statusCode;
 }
@@ -53,6 +55,7 @@ int InfluxDB::writePoints(Point* points, short size, HttpClient& client) {
     }
 
     String url = "/write?db=" + String(this->influxdb_bucket);
+    Log::getInstance().info("Sending request");
 
     client.beginRequest();
     client.setTimeout(5000);
@@ -64,13 +67,13 @@ int InfluxDB::writePoints(Point* points, short size, HttpClient& client) {
     client.print(data);
     client.endRequest();
 
+    Log::getInstance().info("Request send");
+
     int statusCode = client.responseStatusCode();
     String response = client.responseBody();
 
-    Serial.print("Status code: ");
-    Serial.println(statusCode);
-    Serial.print("Response: ");
-    Serial.println(response);
+    Log::getInstance().info("Data received");
+    Log::getInstance().info("Response: " + response);
 
     return statusCode;
 }
