@@ -28,6 +28,7 @@ HttpClient client = HttpClient(wifi, INFLUXDB_HOST, INFLUXDB_PORT);
 InfluxDB *influxDB;
 
 int updateTimeInMilli;
+const char* room;
 
 // sensors
 Sensor *sensor;
@@ -37,6 +38,26 @@ SettingsInitializer settingsInitializer(CONFIG_VALUES,CONFIG_VALUES_COUNT, CONFI
 
 void connectToWifi();
 char* getMACAddressString();
+
+
+// Function to calculate free memory
+#ifdef __arm__
+// should use uinstd.h to define sbrk but Due causes a conflict
+extern "C" char* sbrk(int incr);
+#else  // __ARM__
+extern char *__brkval;+
+#endif  // __arm__
+
+int freeMemory() {
+    char top;
+#ifdef __arm__
+    return &top - reinterpret_cast<char*>(sbrk(0));
+#elif defined(CORE_TEENSY) || (ARDUINO > 103 && ARDUINO != 151)
+    return &top - __brkval;
+#else  // __arm__
+  return __brkval ? &top - __brkval : &top - __malloc_heap_start;
+#endif  // __arm__
+}
 
 void setup()
 {
@@ -81,10 +102,14 @@ void setup()
 
     String updateTime = settingsInitializer.getValue("UPDATE-TIME");
     updateTimeInMilli = updateTime.toInt();
+
+    room = settingsInitializer.getValue("ROOM");
 }
 
 void loop()
 {
+    Log::getInstance().info("Free memory: " + String(freeMemory()) + " bytes");
+
     StatusManager::getInstance().update();
     Log::getInstance().info("WiFi Status: " + String(WiFi.status()));
     if(WiFi.status() != 3) {
@@ -92,7 +117,7 @@ void loop()
         connectToWifi();
     }
     Log::getInstance().info("Retrieving data from sensors");
-    SensorPoint point = sensor->getMeasurementPoints(settingsInitializer.getValue("ROOM"), getMACAddressString());
+    SensorPoint point = sensor->getMeasurementPoints(room, getMACAddressString());
     Log::getInstance().info("Measurements received");
 
     int statusCode = -1;
@@ -104,7 +129,8 @@ void loop()
     }
     Log::getInstance().info("Points written");
 
-    delete point.points;
+    delete[] point.points;
+    point.points = nullptr;
 
     if(statusCode != 204) {
         Log::getInstance().error("Could not write to InfluxDB");
@@ -149,3 +175,4 @@ char* getMACAddressString() {
     return "test-mac";
 
 }
+

@@ -14,9 +14,9 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a2b768a2-cadb-4b11-9eac-21fa34e758b7" name="Changes" comment="Update status messages and connection handling&#10;&#10;Refactored code to handle status messages through the Log class instead of directly using the Serial class. This improves error handling and readability of the code. Also added a 'beginConnection' method to begin NTPClient connections when required, rather than beginning at the object's initialization, improving the efficiency of connection management.">
+    <list default="true" id="a2b768a2-cadb-4b11-9eac-21fa34e758b7" name="Changes" comment="Improve error handling and connection management&#10;&#10;Refactored status message handling to use the Log class, enhancing code readability. Introduced a 'beginConnection' method for initiating connections as necessary, offering a more efficient management of connections compared to starting upon initialization.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/InfluxDB.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/InfluxDB.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HDC1080.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/HDC1080.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -140,7 +140,7 @@
       <workItem from="1717951181911" duration="649000" />
       <workItem from="1717965564596" duration="758000" />
       <workItem from="1717966549566" duration="2261000" />
-      <workItem from="1718016521156" duration="8275000" />
+      <workItem from="1718016521156" duration="10743000" />
     </task>
     <task id="LOCAL-00001" summary="Remove unnecessary .idea files and modify StatusManager.cpp&#10;&#10;The .idea files related to the project's IDE settings were deleted as they are not needed for the actual functioning of the project. The StatusManager.cpp file was changed to set the status color to Blue instead of Orange.">
       <option name="closed" value="true" />
@@ -174,7 +174,15 @@
       <option name="project" value="LOCAL" />
       <updated>1718022348413</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Improve error handling and connection management&#10;&#10;Refactored status message handling to use the Log class, enhancing code readability. Introduced a 'beginConnection' method for initiating connections as necessary, offering a more efficient management of connections compared to starting upon initialization.">
+      <option name="closed" value="true" />
+      <created>1718028963815</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1718028963815</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -199,6 +207,7 @@
     <MESSAGE value="Merge 'getMeasurementPoints' method and improve data measurements&#10;&#10;Changed parameter in 'getMeasurementPoints' from mutable to constant, and improved data measurement mechanisms in HDC1080, SCD30CO2 and SGP30VOC classes. Added additional logging for debugging." />
     <MESSAGE value="Implement new logging method and connection initiation&#10;&#10;Added a new method 'beginConnection' to initiate connections and moved the 'Serial.begin(115200)' to the top of setup function. Additionally, temporarily disabled code blocks that check Wi-Fi status before logging and saving messages." />
     <MESSAGE value="Update status messages and connection handling&#10;&#10;Refactored code to handle status messages through the Log class instead of directly using the Serial class. This improves error handling and readability of the code. Also added a 'beginConnection' method to begin NTPClient connections when required, rather than beginning at the object's initialization, improving the efficiency of connection management." />
-    <option name="LAST_COMMIT_MESSAGE" value="Update status messages and connection handling&#10;&#10;Refactored code to handle status messages through the Log class instead of directly using the Serial class. This improves error handling and readability of the code. Also added a 'beginConnection' method to begin NTPClient connections when required, rather than beginning at the object's initialization, improving the efficiency of connection management." />
+    <MESSAGE value="Improve error handling and connection management&#10;&#10;Refactored status message handling to use the Log class, enhancing code readability. Introduced a 'beginConnection' method for initiating connections as necessary, offering a more efficient management of connections compared to starting upon initialization." />
+    <option name="LAST_COMMIT_MESSAGE" value="Improve error handling and connection management&#10;&#10;Refactored status message handling to use the Log class, enhancing code readability. Introduced a 'beginConnection' method for initiating connections as necessary, offering a more efficient management of connections compared to starting upon initialization." />
   </component>
 </project>
