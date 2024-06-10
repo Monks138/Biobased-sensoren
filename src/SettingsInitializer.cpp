@@ -6,6 +6,7 @@
 #include "StatusManager.h"
 #include <SPI.h>
 #include <SD.h>
+#include "Log.h"
 
 #define SD_CS_PIN 4  // Chip select pin for SD card module
 
@@ -26,7 +27,7 @@ SettingsInitializer::~SettingsInitializer() {
 void SettingsInitializer::begin() {
     bool sdStarted = SD.begin(SD_CS_PIN);
     for(int i = 0; i < 10 && !sdStarted; i++) {
-        Serial.println("SD card initialization failed!");
+        Log::getInstance().error("SD card initialization failed!");
         delay(1000);
         sdStarted = SD.begin(SD_CS_PIN);
 

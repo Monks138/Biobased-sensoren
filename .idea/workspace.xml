@@ -14,8 +14,9 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a2b768a2-cadb-4b11-9eac-21fa34e758b7" name="Changes" comment="Remove unnecessary .idea files and modify StatusManager.cpp&#10;&#10;The .idea files related to the project's IDE settings were deleted as they are not needed for the actual functioning of the project. The StatusManager.cpp file was changed to set the status color to Blue instead of Orange.">
+    <list default="true" id="a2b768a2-cadb-4b11-9eac-21fa34e758b7" name="Changes" comment="Improve error handling and connection management&#10;&#10;Refactored status message handling to use the Log class, enhancing code readability. Introduced a 'beginConnection' method for initiating connections as necessary, offering a more efficient management of connections compared to starting upon initialization.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HDC1080.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/HDC1080.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -35,7 +36,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="feature/extendSD" />
+        <entry key="$PROJECT_DIR$" value="feature/Logger" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -92,7 +93,7 @@
     &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feature/extendSD&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature/Logger&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/Merij/OneDrive/Documents/GitHub/Biobased-sensoren/platformio.ini&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -103,10 +104,19 @@
   }
 }</component>
   <component name="RunManager">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
+    </configuration>
+    <configuration name="PlatformIO" type="platformio" factoryName="PlatformIO Debug" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Biobased-sensoren" TARGET_NAME="PlatformIO" CONFIG_NAME="PlatformIO">
+      <method v="2" />
+    </configuration>
+    <configuration name="PlatformIO" type="platformio" factoryName="PlatformIO Debug" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Biobased-sensoren" TARGET_NAME="PlatformIO" CONFIG_NAME="PlatformIO">
+      <method v="2" />
+    </configuration>
+    <configuration name="PlatformIO" type="platformio" factoryName="PlatformIO Debug" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Biobased-sensoren" TARGET_NAME="PlatformIO" CONFIG_NAME="PlatformIO">
+      <method v="2" />
     </configuration>
     <configuration name="PlatformIO" type="platformio" factoryName="PlatformIO Debug" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Biobased-sensoren" TARGET_NAME="PlatformIO" CONFIG_NAME="PlatformIO">
       <method v="2" />
@@ -125,7 +135,12 @@
       <updated>1717756904132</updated>
       <workItem from="1717756905305" duration="4051000" />
       <workItem from="1717845368985" duration="5327000" />
-      <workItem from="1717869244675" duration="4000" />
+      <workItem from="1717869244675" duration="31000" />
+      <workItem from="1717942345567" duration="4006000" />
+      <workItem from="1717951181911" duration="649000" />
+      <workItem from="1717965564596" duration="758000" />
+      <workItem from="1717966549566" duration="2261000" />
+      <workItem from="1718016521156" duration="10743000" />
     </task>
     <task id="LOCAL-00001" summary="Remove unnecessary .idea files and modify StatusManager.cpp&#10;&#10;The .idea files related to the project's IDE settings were deleted as they are not needed for the actual functioning of the project. The StatusManager.cpp file was changed to set the status color to Blue instead of Orange.">
       <option name="closed" value="true" />
@@ -135,7 +150,39 @@
       <option name="project" value="LOCAL" />
       <updated>1717757832147</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Refactor .idea workspace and update main.cpp&#10;&#10;Removed unneeded .idea configuration files and restructured workspace.xml. The main.cpp file was also modified, particularly the setup and loop methods for better status management connection handling.">
+      <option name="closed" value="true" />
+      <created>1717869263308</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1717869263308</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Merge 'getMeasurementPoints' method and improve data measurements&#10;&#10;Changed parameter in 'getMeasurementPoints' from mutable to constant, and improved data measurement mechanisms in HDC1080, SCD30CO2 and SGP30VOC classes. Added additional logging for debugging.">
+      <option name="closed" value="true" />
+      <created>1718019266343</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1718019266343</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Update status messages and connection handling&#10;&#10;Refactored code to handle status messages through the Log class instead of directly using the Serial class. This improves error handling and readability of the code. Also added a 'beginConnection' method to begin NTPClient connections when required, rather than beginning at the object's initialization, improving the efficiency of connection management.">
+      <option name="closed" value="true" />
+      <created>1718022348413</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1718022348413</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Improve error handling and connection management&#10;&#10;Refactored status message handling to use the Log class, enhancing code readability. Introduced a 'beginConnection' method for initiating connections as necessary, offering a more efficient management of connections compared to starting upon initialization.">
+      <option name="closed" value="true" />
+      <created>1718028963815</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1718028963815</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -154,6 +201,13 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Remove unnecessary .idea files and modify StatusManager.cpp&#10;&#10;The .idea files related to the project's IDE settings were deleted as they are not needed for the actual functioning of the project. The StatusManager.cpp file was changed to set the status color to Blue instead of Orange." />
-    <option name="LAST_COMMIT_MESSAGE" value="Remove unnecessary .idea files and modify StatusManager.cpp&#10;&#10;The .idea files related to the project's IDE settings were deleted as they are not needed for the actual functioning of the project. The StatusManager.cpp file was changed to set the status color to Blue instead of Orange." />
+    <MESSAGE value="Refactor .idea workspace and update main.cpp&#10;&#10;Removed unneeded .idea configuration files and restructured workspace.xml. The main.cpp file was also modified, particularly the setup and loop methods for better status management connection handling." />
+    <MESSAGE value="Update SensorPoint structure and improve data measurement&#10;&#10;Replaced Point return type with updated SensorPoint in sensor classes' methods. Enhanced data measurement mechanism allow multiple sensor readings. Minor changes implemented in .idea workspace and main.cpp." />
+    <MESSAGE value="Update measure() in sensor classes and adjust InfluxDB write methods&#10;&#10;Refactored measure() methods in sensor classes SGP30VOC, SCD30CO2, and HDC1080 to return new SensorPoint structure instead of single Point. Enhanced InfluxDB to support writing multiple points. Other files adjusted to handle these changes." />
+    <MESSAGE value="Merge 'getMeasurementPoints' method and improve data measurements&#10;&#10;Changed parameter in 'getMeasurementPoints' from mutable to constant, and improved data measurement mechanisms in HDC1080, SCD30CO2 and SGP30VOC classes. Added additional logging for debugging." />
+    <MESSAGE value="Implement new logging method and connection initiation&#10;&#10;Added a new method 'beginConnection' to initiate connections and moved the 'Serial.begin(115200)' to the top of setup function. Additionally, temporarily disabled code blocks that check Wi-Fi status before logging and saving messages." />
+    <MESSAGE value="Update status messages and connection handling&#10;&#10;Refactored code to handle status messages through the Log class instead of directly using the Serial class. This improves error handling and readability of the code. Also added a 'beginConnection' method to begin NTPClient connections when required, rather than beginning at the object's initialization, improving the efficiency of connection management." />
+    <MESSAGE value="Improve error handling and connection management&#10;&#10;Refactored status message handling to use the Log class, enhancing code readability. Introduced a 'beginConnection' method for initiating connections as necessary, offering a more efficient management of connections compared to starting upon initialization." />
+    <option name="LAST_COMMIT_MESSAGE" value="Improve error handling and connection management&#10;&#10;Refactored status message handling to use the Log class, enhancing code readability. Introduced a 'beginConnection' method for initiating connections as necessary, offering a more efficient management of connections compared to starting upon initialization." />
   </component>
 </project>

@@ -1,5 +1,6 @@
 #include "Statusmanager.h"
 #include <Arduino.h>
+#include "Log.h"
 
 
 #define STATUS_LED_RED 2
@@ -26,27 +27,22 @@ void StatusManager::setStatus(const Color& color) {
 }
 
 void StatusManager::error(String error, const Color& color, int errorCode) {
-    Serial.print("Error Called:");
-    Serial.println(error);
+    Log::getInstance().error("Error Called" + error);
 
 
     unsigned long currentTime = millis();
     unsigned long currentTimeInSeconds = currentTime / 1000;
 
-    Serial.print("Application ran for ");
-    Serial.print(currentTimeInSeconds);
-    Serial.println(" Seconds");
+    Log::getInstance().error("Application ran for " + String(currentTimeInSeconds) + " Seconds");
 
     unsigned long secs = ERROR_WAIT_TIME / 1000;
-    Serial.print("Exiting in: ");
-    Serial.print(secs);
-    Serial.println(" Seconds");
+    Log::getInstance().error("Exiting in: " + String(secs) + " Seconds");
 
 
     _rgbLed.setColor(color);
     delay(ERROR_WAIT_TIME);
     _rgbLed.setColor(Colors::Off);
-    Serial.println("Exited...");
+    Log::getInstance().error("Exited...");
     exit(errorCode);
 }
 

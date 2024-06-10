@@ -11,7 +11,7 @@ public:
     void begin() override;
     // Measure CO2 and return the value (ppm)
     float measure() override;
-    SensorPoint getMeasurementPoints(char* room, char* macAddress) override;
+    SensorPoint getMeasurementPoints(const char* room, char* macAddress) override;
 
 private:
     SCD30 scd30sensor;
