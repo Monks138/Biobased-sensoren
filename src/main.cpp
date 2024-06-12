@@ -20,7 +20,7 @@
 #define INFLUXDB_TOKEN "UCTCPxVZVeYbQJMcuNcuXW9tf-KhKn90zrQNBN-tddnLjnKrBrsYKkt-scqPx5N2nwvcghdpYchs638xOviHTA=="
 
 #define CONFIG_FILE "settings.ini"
-#define CONFIG_VALUES_COUNT 5
+#define CONFIG_VALUES_COUNT 6
 
 
 WiFiSSLClient wifi;
@@ -33,7 +33,7 @@ const char* room;
 // sensors
 Sensor *sensor;
 
-String CONFIG_VALUES[] = {"WIFI-SSID", "WIFI-PASSWORD", "SENSOR-TYPE", "ROOM", "UPDATE-TIME"};
+String CONFIG_VALUES[] = {"WIFI-SSID", "WIFI-PASSWORD", "SENSOR-TYPE", "ROOM", "UPDATE-TIME", "DEBUG-MODE"};
 SettingsInitializer settingsInitializer(CONFIG_VALUES,CONFIG_VALUES_COUNT, CONFIG_FILE);
 
 void connectToWifi();
@@ -64,12 +64,24 @@ void setup()
     Serial.begin(115200);
     StatusManager::getInstance();
     delay(5000);
-    Log::getInstance().info("Program Started!");
 
 // Only for debugging
 //    while(!Serial){}
 
     settingsInitializer.begin();
+
+    arduino::String debugMode = settingsInitializer.getValue("DEBUG-MODE");
+    debugMode.toUpperCase();
+
+    if(strcmp(debugMode.c_str(), "TRUE") == 0) {
+        Log::getInstance().setDebugMode(true);
+    } else if(strcmp(debugMode.c_str(), "FALSE") == 0) {
+        Log::getInstance().setDebugMode(false);
+    } else {
+        Log::getInstance().error("Debug-Mode not found (that was stated in the config)");
+    }
+
+    Log::getInstance().info("Program Started!");
     Log::getInstance().info("Settings loaded successfully");
     for (const auto & i : CONFIG_VALUES) {
         Log::getInstance().info(i + ": " + settingsInitializer.getValue(i));
@@ -165,14 +177,12 @@ void connectToWifi() {
 }
 
 char* getMACAddressString() {
-//  byte mac[6];
-//  WiFi.macAddress(mac);
-//
-//  char macStr[18];
-//  sprintf(macStr, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-//
-//  return macStr;
-    return "test-mac";
+ byte mac[6];
+ WiFi.macAddress(mac);
 
+ static char macStr[18];
+ sprintf(macStr, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+
+ return macStr;
 }
 

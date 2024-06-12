@@ -20,9 +20,13 @@ class Log {
         void info(const arduino::String &message);
         void error(const arduino::String &message);
         void beginConnection();
+        void setDebugMode(bool mode);
+        
     private:
         void writeToCard(const arduino::String &level, const arduino::String &message);
         void serialPrintTime();
         WiFiUDP* udpSocket;
         NTPClient* ntpClient;
+
+        bool debugMode = false;
 };
