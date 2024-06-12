@@ -10,6 +10,7 @@
 #include "InfluxDB.h"
 #include "StatusManager.h"
 #include "Log.h"
+#include <Adafruit_SleepyDog.h>
 
 #define PIN_CD 7
 
@@ -59,11 +60,15 @@ int freeMemory() {
 #endif  // __arm__
 }
 
+unsigned long currentMillis;
+
 void setup()
 {
     Serial.begin(115200);
     StatusManager::getInstance();
-    delay(5000);
+    delay(500);
+
+    Log::getInstance().info("Program Started!");
 
 // Only for debugging
 //    while(!Serial){}
@@ -109,45 +114,58 @@ void setup()
     StatusManager::getInstance().setStatus(Colors::Green);
     StatusManager::getInstance().setCurrentTime();
 
-    Log::getInstance();
-    Log::getInstance().info("End of setup");
-
     String updateTime = settingsInitializer.getValue("UPDATE-TIME");
     updateTimeInMilli = updateTime.toInt();
 
     room = settingsInitializer.getValue("ROOM");
+
+    int countdownMS = Watchdog.enable(10000);
+    Log::getInstance().info("Watchdog started for " + String(countdownMS) + " millis");
+
+    Log::getInstance().info("End of setup");
+    currentMillis = 0;
 }
+
 
 void loop()
 {
-    Log::getInstance().info("Free memory: " + String(freeMemory()) + " bytes");
+    Watchdog.reset();
+    unsigned long newMillis = millis();
 
-    StatusManager::getInstance().update();
-    Log::getInstance().info("WiFi Status: " + String(WiFi.status()));
-    if(WiFi.status() != 3) {
-        Log::getInstance().error("WiFi disconnected! Reconnecting...");
-        connectToWifi();
+    if(newMillis - currentMillis >= updateTimeInMilli) {
+        Log::getInstance().info("Free memory: " + String(freeMemory()) + " bytes");
+
+        StatusManager::getInstance().update();
+        Log::getInstance().info("WiFi Status: " + String(WiFi.status()));
+        Log::getInstance().info("Retrieving data from sensors");
+        SensorPoint point = sensor->getMeasurementPoints(room, getMACAddressString());
+        Log::getInstance().info("Measurements received");
+
+        Watchdog.reset();
+
+        int statusCode = -1;
+        Log::getInstance().info("Writing points");
+        if (WiFi.status() == WL_CONNECTED) {
+            if (point.size > 1) {
+                statusCode = influxDB->writePoints(point.points, point.size, client);
+            } else if (point.size == 1) {
+                statusCode = influxDB->writePoint(point.points[0], client);
+            }
+            Log::getInstance().info("Points written");
+        } else {
+            Log::getInstance().error("WiFi disconnected! Reconnecting...");
+            connectToWifi();
+        }
+
+        delete[] point.points;
+        point.points = nullptr;
+
+        if (statusCode != 204) {
+            Log::getInstance().error("Could not write to InfluxDB");
+        }
+    currentMillis = newMillis;
     }
-    Log::getInstance().info("Retrieving data from sensors");
-    SensorPoint point = sensor->getMeasurementPoints(room, getMACAddressString());
-    Log::getInstance().info("Measurements received");
-
-    int statusCode = -1;
-    Log::getInstance().info("Writing points");
-    if(point.size > 1) {
-        statusCode = influxDB->writePoints(point.points, point.size, client);
-    } else if(point.size == 1){
-        statusCode = influxDB->writePoint(point.points[0], client);
-    }
-    Log::getInstance().info("Points written");
-
-    delete[] point.points;
-    point.points = nullptr;
-
-    if(statusCode != 204) {
-        Log::getInstance().error("Could not write to InfluxDB");
-    }
-    delay(updateTimeInMilli);
+    delay(100);
 }
 
 void connectToWifi() {
@@ -156,6 +174,7 @@ void connectToWifi() {
   int count = 0;
 
   while (status != WL_CONNECTED) {
+    Watchdog.reset();
     Log::getInstance().info("Attempting to connect to network: " + arduino::String(settingsInitializer.getValue("WIFI-SSID")));
     // Serial.print("Attempting to connect to network: ");
     // Serial.println(arduino::String(settingsInitializer.getValue("WIFI-SSID")));
@@ -174,6 +193,7 @@ void connectToWifi() {
 //  Log::getInstance().beginConnection();
   Log::getInstance().info("Connected to wifi!");
 //   Serial.println("Connected to wifi!");
+    Watchdog.reset();
 }
 
 char* getMACAddressString() {
