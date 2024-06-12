@@ -4,6 +4,8 @@
 #include "Sensor.h"
 #include <SCD30.h>
 
+#define OFFSET -100
+
 class SCD30CO2 : public Sensor
 {
 public:
