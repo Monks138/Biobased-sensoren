@@ -36,13 +36,17 @@ int InfluxDB::writePoint(Point point, HttpClient& client) {
 
     Log::getInstance().info("Request send");
 
-    int statusCode = client.responseStatusCode();
-    String response = client.responseBody();
+    if(WiFi.status() == WL_CONNECTED) {
+        int statusCode = client.responseStatusCode();
+        String response = client.responseBody();
 
-    Log::getInstance().info("Data received");
-    Log::getInstance().info("Response: " + response);
+        Log::getInstance().info("Data received");
+        Log::getInstance().info("Response: " + response);
 
-    return statusCode;
+        return statusCode;
+    } else {
+        return -1;
+    }  
 }
 
 int InfluxDB::writePoints(Point* points, short size, HttpClient& client) {
