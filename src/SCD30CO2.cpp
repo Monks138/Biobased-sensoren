@@ -15,7 +15,7 @@ void SCD30CO2::begin()
     }
     Serial.println("SCD30CO2 sensor found :)");
 
-    offset = 0.0;
+    offset = OFFSET;
 }
 
 float SCD30CO2::measure()

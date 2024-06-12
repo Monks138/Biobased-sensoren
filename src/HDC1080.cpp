@@ -27,7 +27,6 @@ void HDC1080::begin()
 	char format[100];
 	sprintf(format, "%02X-%04X-%04X", sernum.serialFirst, sernum.serialMid, sernum.serialLast);
 	Serial.println(format);
-    Serial.println("Hai");
 }
 
 float HDC1080::measure()
