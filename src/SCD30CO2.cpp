@@ -26,7 +26,14 @@ float SCD30CO2::measure()
     }
     float result[3];
     scd30sensor.getCarbonDioxideConcentration(result);
-    return result[0] + offset;
+
+    float co2 = result[0] + offset;
+
+    if(co2 < 0 || co2 > 20000)
+    {
+        -1.0;
+    }
+    return co2;
 }
 
 SensorPoint SCD30CO2::getMeasurementPoints(const char* room, char* macAddress)
