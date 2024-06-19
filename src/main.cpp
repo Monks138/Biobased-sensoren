@@ -143,12 +143,30 @@ void loop()
 
         Watchdog.reset();
 
+        // Check if all values are valid
+        for(int i = 0; i < point.size; ++i) {
+            int index = point.points[i].toLineProtocol().indexOf(" co2=");
+            int end = point.points[i].toLineProtocol().length();
+            String measurement = point.points[i].toLineProtocol().substring(index, end);
+
+
+            if(measurement.indexOf("-1.0") < 0) {
+                Log::getInstance().info("Valid value found: " + measurement);
+            } else {
+                Log::getInstance().error("Invalid value found, delaying for 20 secoonds to activate watchdog, measurement: " + measurement);
+                Watchdog.enable(1);
+                while(1);
+            }
+            Log::getInstance().info("Measurement: " + arduino::String(measurement));
+        }
+
         int statusCode = -1;
         Log::getInstance().info("Writing points");
         if (WiFi.status() == WL_CONNECTED) {
             if (point.size > 1) {
                 statusCode = influxDB->writePoints(point.points, point.size, client);
             } else if (point.size == 1) {
+
                 statusCode = influxDB->writePoint(point.points[0], client);
             }
             Log::getInstance().info("Points written");
