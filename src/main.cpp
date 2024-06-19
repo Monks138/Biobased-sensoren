@@ -154,10 +154,11 @@ void loop()
                 Log::getInstance().info("Valid value found: " + measurement);
             } else {
                 Log::getInstance().error("Invalid value found, delaying for 20 secoonds to activate watchdog, measurement: " + measurement);
+                StatusManager::getInstance().setStatus(Colors::Purple);
+                delay(5000);
                 Watchdog.enable(1);
                 while(1);
             }
-            Log::getInstance().info("Measurement: " + arduino::String(measurement));
         }
 
         int statusCode = -1;
