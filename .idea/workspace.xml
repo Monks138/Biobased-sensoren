@@ -16,8 +16,16 @@
   <component name="ChangeListManager">
     <list default="true" id="a2b768a2-cadb-4b11-9eac-21fa34e758b7" name="Changes" comment="Optimized memory usage and sensor data retrieval&#10;&#10;Implemented better memory management by freeing previously allocated memory. Enhanced sensor data retrieval by preserving measured temperature and humidity data into variables, which simplifies debugging. Also introduced logging for free memory space to track memory usage.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platformio.ini" beforeDir="false" afterPath="$PROJECT_DIR$/platformio.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HDC1080.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/HDC1080.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/InfluxDB.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/InfluxDB.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Log.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Log.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Point.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Point.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/RGBLed.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/RGBLed.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SCD30CO2.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/SCD30CO2.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SGP30VOC.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/SGP30VOC.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Sensor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Sensor.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SettingsInitializer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/SettingsInitializer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/StatusManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/StatusManager.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -105,10 +113,13 @@
   }
 }</component>
   <component name="RunManager">
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
       </method>
+    </configuration>
+    <configuration name="PlatformIO" type="platformio" factoryName="PlatformIO Debug" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Biobased-sensoren" TARGET_NAME="PlatformIO" CONFIG_NAME="PlatformIO">
+      <method v="2" />
     </configuration>
     <configuration name="PlatformIO" type="platformio" factoryName="PlatformIO Debug" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Biobased-sensoren" TARGET_NAME="PlatformIO" CONFIG_NAME="PlatformIO">
       <method v="2" />
@@ -144,6 +155,7 @@
       <workItem from="1718016521156" duration="12916000" />
       <workItem from="1718091102841" duration="3118000" />
       <workItem from="1718100808384" duration="1713000" />
+      <workItem from="1718798144978" duration="633000" />
     </task>
     <task id="LOCAL-00001" summary="Remove unnecessary .idea files and modify StatusManager.cpp&#10;&#10;The .idea files related to the project's IDE settings were deleted as they are not needed for the actual functioning of the project. The StatusManager.cpp file was changed to set the status color to Blue instead of Orange.">
       <option name="closed" value="true" />

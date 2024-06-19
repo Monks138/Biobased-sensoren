@@ -37,7 +37,42 @@ Sensor *sensor;
 String CONFIG_VALUES[] = {"WIFI-SSID", "WIFI-PASSWORD", "SENSOR-TYPE", "ROOM", "UPDATE-TIME", "DEBUG-MODE"};
 SettingsInitializer settingsInitializer(CONFIG_VALUES,CONFIG_VALUES_COUNT, CONFIG_FILE);
 
+/**
+ * @brief Connects to a WiFi network.
+ *
+ * Attempts to connect to a specified WiFi network using the SSID and password
+ * obtained from the settingsInitializer. If the connection is successful, the
+ * function logs a message indicating the successful connection. If the connection
+ * fails, an error message is logged.
+ *
+ * @note This function uses the Watchdog to reset the device while attempting to connect
+ * and logs messages using the Log and StatusManager classes.
+ *
+ * @see WL_IDLE_STATUS
+ * @see WL_CONNECTED
+ * @see Watchdog
+ * @see Log
+ * @see StatusManager
+ * @see settingsInitializer
+ */
 void connectToWifi();
+/**
+ * \fn char* getMACAddressString()
+ * \brief Retrieves the MAC address of the device and converts it to a string.
+ *
+ * This function retrieves the MAC (Media Access Control) address of the device and converts it to a string representation.
+ * The MAC address is a unique identifier assigned to the network interface of the device.
+ *
+ * \return A pointer to a character array representing the MAC address string.
+ *
+ * \details This function uses the WiFi.macAddress() method to retrieve the MAC address of the device. It then converts the MAC address
+ * to a string representation using the sprintf() function and stores it in the static char array macStr. Finally, it returns a pointer
+ * to the macStr array.
+ *
+ * \note The returned MAC address string is in the format "XX:XX:XX:XX:XX:XX" where X represents a hexadecimal digit.
+ *
+ * \see WiFiClass::macAddress()
+ */
 char* getMACAddressString();
 
 
@@ -49,6 +84,15 @@ extern "C" char* sbrk(int incr);
 extern char *__brkval;+
 #endif  // __arm__
 
+/**
+ * @brief Calculates the amount of free memory in bytes.
+ *
+ * The function measures the amount of free memory available on the system by
+ * determining the difference between the current stack pointer and the heap
+ * memory location.
+ *
+ * @return The amount of free memory in bytes.
+ */
 int freeMemory() {
     char top;
 #ifdef __arm__
@@ -62,6 +106,54 @@ int freeMemory() {
 
 unsigned long currentMillis;
 
+/**
+ * @brief Initialize the program
+ *
+ * This function sets up the necessary components and configurations for the program to run.
+ *
+ * @note Requires the following definitions:
+ * - Serial: a Serial object
+ * - StatusManager: a StatusManager class instance
+ * - Log: a Log class instance
+ * - settingsInitializer: a SettingsInitializer object
+ * - CONFIG_VALUES: an array of Strings containing configuration values
+ * - CONFIG_VALUES_COUNT: the number of elements in CONFIG_VALUES array
+ * - CONFIG_FILE: a String specifying the configuration file
+ * - Sensor: a base class for different types of sensors
+ * - SCD30CO2: a class representing SCD30CO2 sensor
+ * - SGP30VOC: a class representing SGP30VOC sensor
+ * - HDC1080: a class representing HDC1080 sensor
+ * - Colors: a namespace containing Color objects
+ * - INFLUXDB_HOST: a char pointer representing InfluxDB host
+ * - INFLUXDB_ORG: a char pointer representing InfluxDB organization
+ * - INFLUXDB_BUCKET: a char pointer representing InfluxDB bucket
+ * - INFLUXDB_TOKEN: a char pointer representing InfluxDB token
+ * - WiFi: an external WiFiClass object
+ * - Watchdog: an external WatchdogType object
+ *
+ * @note Requires the following functions:
+ * - void connectToWifi(): connects to WiFi network
+ * - void delay(unsigned long milliseconds): pauses the program for the specified number of milliseconds
+ * - char* arduino::String::c_str(): returns a pointer to the underlying C-style character array of the String object
+ * - int strcmp(const char* s1, const char* s2): compares two strings and returns 0 if they are equal
+ * - void Sensor::begin(): initializes the sensor
+ * - void Log::info(const String& message): logs an informational message
+ * - void Log::error(const String& message): logs an error message
+ * - void StatusManager::error(const String& message, const Color& color): logs an error message with the specified color
+ * - void StatusManager::setStatus(const Color& color): sets the status color
+ * - void StatusManager::setCurrentTime(): sets the current time in StatusManager
+ * - String SettingsInitializer::getValue(const String& key): retrieves the value for the specified key from the configuration file
+ * - InfluxDB::InfluxDB(char* influxdb_url, char* influxdb_org, char* influxdb_bucket, char* influxdb_token): constructor for InfluxDB class
+ * - int SettingsInitializer::begin(): initializes the settings from the configuration file
+ * - int WatchdogType::enable(int timeout): enables the Watchdog with the specified timeout in milliseconds and returns the countdown value
+ *
+ * @note Provides the following variables:
+ * - Sensor* sensor: a pointer to the current sensor
+ * - InfluxDB* influxDB: a pointer to the InfluxDB object
+ * - int updateTimeInMilli: the update time in milliseconds
+ * - const char* room: the room name
+ * - unsigned long currentMillis: the current time in milliseconds
+ */
 void setup()
 {
     Serial.begin(115200);
@@ -127,6 +219,26 @@ void setup()
 }
 
 
+/**
+ * @brief Main loop function
+ *
+ * This function is called repeatedly in the main loop. It performs the following tasks:
+ * 1. Resets the watchdog timer
+ * 2. Retrieves the current time in milliseconds
+ * 3. Checks if it's time to update the measurements
+ * 4. Logs the current free memory
+ * 5. Updates the status manager
+ * 6. Logs the WiFi status
+ * 7. Retrieves the sensor measurements and logs them
+ * 8. Resets the watchdog timer
+ * 9. Checks if all CO2 values are valid
+ * 10. Writes the measurements to the InfluxDB database
+ * 11. Logs the status of the write operation
+ * 12. Deletes the measurement points array
+ * 13. Checks if the write operation was successful
+ * 14. Updates the current time
+ * 15. Delays for 100 milliseconds
+ */
 void loop()
 {
     Watchdog.reset();
@@ -188,6 +300,32 @@ void loop()
     delay(100);
 }
 
+/**
+ * @brief Connects to WiFi network
+ *
+ * This function attempts to connect to the specified WiFi network using the provided SSID and password.
+ * It will keep trying to connect until it is successful or until a maximum number of attempts is reached.
+ * If the connection is successful, it will log the success message. If the connection fails, it will log an error message.
+ *
+ * @note Requires the following definitions:
+ * - WL_IDLE_STATUS: 0
+ * - WL_CONNECTED
+ * - Watchdog: an external WatchdogType object
+ * - Log: a Log class instance
+ * - settingsInitializer: a SettingsInitializer object
+ * - WiFi: an external WiFiClass object
+ * - StatusManager: a StatusManager class instance
+ * - Orange: a Color object with RGB values (255, 165, 0)
+ *
+ * @note Requires the following functions:
+ * - String arduino::String(const char *str)
+ * - WiFi.begin(const char *ssid, const char *password)
+ * - delay(unsigned long milliseconds)
+ * - StatusManager::getInstance(): returns a reference to a StatusManager object
+ * - Log::getInstance(): returns a reference to a Log object
+ * - Log::info(const String &message): logs an informational message
+ * - StatusManager::error(const String &message, const Color &color): logs an error message with the specified color
+ */
 void connectToWifi() {
   int status = WL_IDLE_STATUS;
 
@@ -216,6 +354,16 @@ void connectToWifi() {
     Watchdog.reset();
 }
 
+/**
+ * @brief Get the MAC address as a string
+ *
+ * This function retrieves the MAC address of the WiFi module and converts it into a string format.
+ * The MAC address is a unique identifier assigned to the network interface of the device.
+ *
+ * @return A pointer to a character array containing the MAC address string.
+ *
+ * @note The returned string is statically allocated and should not be modified or freed by the caller.
+ */
 char* getMACAddressString() {
  byte mac[6];
  WiFi.macAddress(mac);

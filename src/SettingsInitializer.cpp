@@ -10,6 +10,15 @@
 
 #define SD_CS_PIN 4  // Chip select pin for SD card module
 
+/**
+ * @class SettingsInitializer
+ *
+ * @brief A class for initializing settings with given keys, count, and file path.
+ *
+ * The SettingsInitializer class allows you to initialize settings using a list of keys,
+ * the number of keys, and a file path. The file at the given path is expected to contain
+ * the values corresponding to the keys.
+ */
 SettingsInitializer::SettingsInitializer(String keys[], int keyCount, String filePath) {
     parameterCount = keyCount;
     configFilePath = filePath;
@@ -20,10 +29,28 @@ SettingsInitializer::SettingsInitializer(String keys[], int keyCount, String fil
     }
 }
 
+/**
+ * @brief Destructor for the SettingsInitializer class.
+ *
+ * This destructor deletes the dynamically allocated memory for the parameters array,
+ * which holds the key-value pairs.
+ */
 SettingsInitializer::~SettingsInitializer() {
     delete[] parameters;
 }
 
+/**
+ * @brief Initialize the settings
+ *
+ * This function initializes the settings by performing the following steps:
+ *  1. Initialize the SD card with the given chip select pin.
+ *  2. Retry the initialization up to 10 times if it fails.
+ *  3. If the SD card is not found, display an error message.
+ *  4. Open the config file on the SD card.
+ *  5. If the config file is not found, display a warning message.
+ *  6. Read the values from the config file and update the parameters.
+ *  7. Flush and close the config file.
+ */
 void SettingsInitializer::begin() {
     bool sdStarted = SD.begin(SD_CS_PIN);
     for(int i = 0; i < 10 && !sdStarted; i++) {
@@ -46,6 +73,14 @@ void SettingsInitializer::begin() {
     configFile.close();
 }
 
+/**
+ * @brief Reads values from a configuration file and updates the corresponding key-value pairs.
+ *
+ * This function reads the configuration file specified by `configFilePath` and updates the
+ * `value` attribute of the key-value pairs in the `parameters` array. Each line in the
+ * configuration file should be in the format "key=value". The function searches for a matching
+ * key in the `parameters` array and assigns the value to the corresponding key-value pair.
+ */
 void SettingsInitializer::readValues() {
     File configFile = SD.open(configFilePath.c_str());
     configFile.seek(0);
@@ -70,6 +105,11 @@ void SettingsInitializer::readValues() {
     }
 }
 
+/**
+ * @brief SettingsInitializer class
+ *
+ * This class is responsible for initializing and retrieving values from settings.
+ */
 const char* SettingsInitializer::getValue(String key) {
     for (int i = 0; i < parameterCount; i++) {
         if (parameters[i].key == key) {
