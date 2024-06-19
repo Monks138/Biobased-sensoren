@@ -30,7 +30,6 @@ void SettingsInitializer::begin() {
         Log::getInstance().error("SD card initialization failed!");
         delay(1000);
         sdStarted = SD.begin(SD_CS_PIN);
-
     }
 
     if(!sdStarted) {
@@ -43,17 +42,19 @@ void SettingsInitializer::begin() {
     }
     readValues();
 
-    configFile.close();
     configFile.flush();
+    configFile.close();
 }
 
 void SettingsInitializer::readValues() {
     File configFile = SD.open(configFilePath.c_str());
     configFile.seek(0);
+
     while (configFile.available()) {
         String line = configFile.readStringUntil('\n');
         line.trim();
         int separatorIndex = line.indexOf('=');
+
         if (separatorIndex != -1) {
             String key = line.substring(0, separatorIndex);
             String value = line.substring(separatorIndex + 1);

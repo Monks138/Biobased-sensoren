@@ -2,6 +2,7 @@
 #include <ArduinoHttpClient.h>
 #include "InfluxDB.h"
 #include "Log.h"
+#include <Adafruit_SleepyDog.h>
 
 InfluxDB::InfluxDB(char* influxdb_url, char* influxdb_org, char* influxdb_bucket, char* influxdb_token) {
     this->influxdb_url = influxdb_url;
@@ -24,7 +25,7 @@ int InfluxDB::writePoint(Point point, HttpClient& client) {
     Log::getInstance().info("Sending request");
 
     client.beginRequest();
-    client.setTimeout(5000);
+    client.setTimeout(1500);
     client.post(url);
     client.sendHeader("Authorization", String("Token ") + String(this->influxdb_token));
     client.sendHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -33,16 +34,21 @@ int InfluxDB::writePoint(Point point, HttpClient& client) {
     client.print(data);
     client.endRequest();
 
+    Watchdog.reset();
 
     Log::getInstance().info("Request send");
 
-    int statusCode = client.responseStatusCode();
-    String response = client.responseBody();
+    if(WiFi.status() == WL_CONNECTED) {
+        int statusCode = client.responseStatusCode();
+        String response = client.responseBody();
 
-    Log::getInstance().info("Data received");
-    Log::getInstance().info("Response: " + response);
+        Log::getInstance().info("Data received");
+        Log::getInstance().info("Response: " + response);
 
-    return statusCode;
+        return statusCode;
+    } else {
+        return -1;
+    }  
 }
 
 int InfluxDB::writePoints(Point* points, short size, HttpClient& client) {
@@ -58,7 +64,7 @@ int InfluxDB::writePoints(Point* points, short size, HttpClient& client) {
     Log::getInstance().info("Sending request");
 
     client.beginRequest();
-    client.setTimeout(5000);
+    client.setTimeout(1500);
     client.post(url);
     client.sendHeader("Authorization", String("Token ") + String(this->influxdb_token));
     client.sendHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -66,6 +72,8 @@ int InfluxDB::writePoints(Point* points, short size, HttpClient& client) {
     client.beginBody();
     client.print(data);
     client.endRequest();
+
+    Watchdog.reset();
 
     Log::getInstance().info("Request send");
 
